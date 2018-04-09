@@ -7,19 +7,22 @@ app.use(bodyParser.urlencoded({ extended: true })); // soporte para bodies codif
 
 //Ejemplo: POST http://localhost:8080/items
 app.post('/items', function(req, res) {
+    console.log("Han entrado");
     var obj = req.body;
     console.log(obj);
     var data = req.body.data;
     var speed = req.body.speed;
-    var rpm = req.body.speed;
-    var lvl =  req.body.speed;
-    var time = req.body.speed;
-    var distance = req.body.speed;
-    console.log(data+speed+rpm+lvl+time+distance);
+    var rpm = req.body.rpm;
+    var lvl =  req.body.lvl;
+    var time = req.body.time;
+    var distance = req.body.distance;
+    console.log(data+" "+speed+" "+rpm+" "+lvl+" "+time+" "+distance);
+    res.end();
 
 });
 
-var server = app.listen(8080, function () {
+
+var server = app.listen(80, function () {
     console.log('Server is running..');
 });
 
