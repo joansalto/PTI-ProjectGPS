@@ -2,8 +2,25 @@
 var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
+var mysql = require('mysql');
 app.use(bodyParser.json()); // soporte para bodies codificados en jsonsupport
 app.use(bodyParser.urlencoded({ extended: true })); // soporte para bodies codificados
+
+var connection = mysql.createConnection({
+    host: 'carlocator.cshcpypejvib.us-west-2.rds.amazonaws.com',
+    user: 'root',
+    password: 'CarLocator'
+
+});
+connection.connect(function(error){
+    if(error){
+        throw error;
+    }else{
+        console.log('Conexion correcta.');
+    }
+});
+connection.end();
+
 
 //Ejemplo: POST http://localhost:8080/items
 app.post('/items', function(req, res) {
@@ -16,13 +33,49 @@ app.post('/items', function(req, res) {
     var lvl =  req.body.lvl;
     var time = req.body.time;
     var distance = req.body.distance;
-    console.log(data+" "+speed+" "+rpm+" "+lvl+" "+time+" "+distance);
+
+    var idrasp = req.body.idrasp;
+    var x = req.body.x;
+    var y = req.body.y;
+
+
+    //console.log(data+" "+speed+" "+rpm+" "+lvl+" "+time+" "+distance);
+
+    connection.connect();
+
+    var query = connection.query('INSERT INTO CarData(ID_rasp, Fecha, RPM, Speed, Fuel_lvl, Runtime, Distance, X, Y) VALUES("'+idrasp+'", '+data+' , '+rpm+', '+speed+','+lvl+', '+time+','+distance+',"'+x+'","'+y+'")', function(error, result){
+            if(error){
+                throw error;
+            }else{
+                console.log(result);
+            }
+        }
+    );
+
+    connection.end();
+
+
     res.end();
+
+
 
 });
 
 
+
 var server = app.listen(80, function () {
     console.log('Server is running..');
+    connection.connect();
+
+    var query = connection.query('Select 0 AS Test', function(error, result){
+            if(error){
+                throw error;
+            }else{
+                console.log(result);
+            }
+        }
+    );
+
+    connection.end();
 });
 
