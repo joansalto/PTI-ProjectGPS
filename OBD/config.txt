@@ -1,0 +1,1 @@
+dtoverlay=pps-gpio,gpiopin=18
