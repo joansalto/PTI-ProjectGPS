@@ -12,12 +12,12 @@ apt-get install libcap-dev
 apt-get install gpsd gpsd-clients python-gps
 apt-get update
 
-cp -vuf ./config.txt /boot/config.txt
-cp -vuf ./modules /etc/moduels
+cp -vub ./config.txt /boot/config.txt
+cp -vub ./modules /etc/moduels
 
 #No estoy seguro si esto funciona sin reboot
 #reboot
-cp -vuf ./gpsd /etc/default/gpsd
+cp -vub ./gpsd /etc/default/gpsd
 
 sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd-sock
 #cgps -s
