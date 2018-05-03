@@ -1,0 +1,11 @@
+Intrucciones parar npm servidor : 
+
+ps -a 
+
+sudo kill -9 <pid-npm>
+sudo kill -9 <pid-node>
+
+
+Instrucciones iniciar
+
+sudo npm start &
