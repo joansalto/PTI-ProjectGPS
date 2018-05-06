@@ -6,11 +6,11 @@ var mysql = require('mysql');
 app.use(bodyParser.json()); // soporte para bodies codificados en jsonsupport
 app.use(bodyParser.urlencoded({ extended: true })); // soporte para bodies codificados
 
-var connection = mysql.createConnection({
-    host: 'carlocator.cshcpypejvib.us-west-2.rds.amazonaws.com',
-    user: 'root',
-    password: 'CarLocator',
-    database: 'CarLocator'
+    var connection = mysql.createConnection({
+        host: 'carlocator.cshcpypejvib.us-west-2.rds.amazonaws.com',
+        user: 'root',
+        password: 'CarLocator',
+        database: 'CarLocator'
 
 });
 /*connection.connect(function(error){
