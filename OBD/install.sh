@@ -3,7 +3,11 @@
 #OBD
 apt-get update
 apt-get upgrade
+curl -O https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
 pip install obd
+pip install requests
+pip install simplejson
 apt-get install bluetooth bluez blueman
 
 #GPS
