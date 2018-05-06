@@ -7,7 +7,7 @@ var mysql = require('mysql'),
 var router = express.Router();
 router.get('/', function(req, res) {
     res.writeHead(301,
-        {Location: 'http://localhost'   }
+        {Location: './'   }
     );
     res.end();
 
@@ -15,9 +15,8 @@ router.get('/', function(req, res) {
 
 /* Falta modificar para el funcionamiento correcto. */
 router.post('/', function(req, res) {
-    console.log("Han entrado");
+
     var obj = req.body;
-    console.log(obj);
     var data = req.body.data;
     var speed = req.body.speed;
     var rpm = req.body.rpm;
