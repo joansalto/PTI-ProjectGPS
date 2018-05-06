@@ -25,7 +25,7 @@ router.post('/', function(req, res, next) {
         if(result.length > 0) {
             req.session.logueado = 1;
             res.writeHead(301,
-                {Location: 'http://localhost/menu'}
+                {Location: 'http://localhost/'}
             );
             res.end();
         }
