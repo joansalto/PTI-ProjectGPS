@@ -1,0 +1,30 @@
+extends layout
+
+block content
+    html
+        head
+            title= "Clientes"
+            link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
+        body
+            .main.container
+                .row
+                        table.table-bordered.table-responsive.table-hover
+                            thead
+                                .active
+                                    tr
+                                        th ID
+                                        th DNI
+                                        th Nombre
+                                        th Apellido
+                                        th Telefono
+                                        th Email
+                                        th Fecha Nacimiento
+                            tbody
+                                each item in rows
+                                    tr
+                                        td= item.ID
+                                        td= item.DNI
+                                        td= item.Nombre
+                                        td= item.Apellido
+                                        td= item.Email
+                                        td= item.FecjaNacimiento
