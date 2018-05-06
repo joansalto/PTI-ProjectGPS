@@ -19,24 +19,18 @@ router.post('/', function(req, res, next) {
     console.log("usuario: " + usuario);
     console.log("password: " + pass);
     var cifrado = md5(pass);
-    connection.query('select * from users where user = "'+usuario+'"  and pass = "'+cifrado+'"', function (err, result) {
+    connection.query('select * from users where user = "'+usuario+'"  and password = "'+cifrado+'"', function (err, result) {
         if (err) throw err;
         console.log(result);
         if(result.length > 0) {
             req.session.logueado = 1;
+            res.writeHead(301,
+                {Location: 'http://localhost/menu'}
+            );
+            res.end();
         }
+        else { console.log("User o pass incorrecta")}
     });
-    if (req.session.logueado){
-        /*res.writeHead(301,
-            {Location: 'http://localhost/menu'}
-        );
-        res.end();
-       */
-        console.log('logueado con exito');
-
-    }
-    else { console.log("Tu puta mae guea")}
-
 
     res.end();
 
