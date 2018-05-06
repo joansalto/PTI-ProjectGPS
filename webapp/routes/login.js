@@ -10,7 +10,8 @@ var mysql = require('mysql'),
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-    res.render('login');
+    res.render('login', {
+        correct: '1'});
 });
 router.post('/', function(req, res, next) {
 
@@ -21,7 +22,6 @@ router.post('/', function(req, res, next) {
     var cifrado = md5(pass);
     connection.query('select * from users where user = "'+usuario+'"  and password = "'+cifrado+'"', function (err, result) {
         if (err) throw err;
-        console.log(result);
         if(result.length > 0) {
             req.session.logueado = 1;
             res.writeHead(301,
@@ -29,10 +29,12 @@ router.post('/', function(req, res, next) {
             );
             res.end();
         }
-        else { console.log("User o pass incorrecta")}
+        else {
+            res.render('login', {
+                correct: '0'});
+            console.log("User o pass incorrecta")}
     });
 
-    res.end();
 
 });
 
