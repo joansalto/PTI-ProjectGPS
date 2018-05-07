@@ -8,7 +8,12 @@ var mysql = require('mysql'),
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-
+    if(req.session.logueado === 0) {
+        res.writeHead(301,
+            {Location: './'}
+        );
+        setTimeout(res.end(), 3000);
+    }
     var sql = 'SELECT * from ClientData';
 
 
