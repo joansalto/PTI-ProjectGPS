@@ -25,17 +25,28 @@ router.post('/', function(req, res, next) {
         if(result.length > 0) {
             req.session.logueado = 1;
             res.writeHead(301,
-                {Location: 'http://localhost/'}
+                {Location: './'}
             );
             res.end();
         }
         else {
             res.render('login', {
                 correct: '0'});
-            console.log("User o pass incorrecta")}
+           }
     });
 
 
 });
+
+router.get('/logout',function (req,res,next) {
+    if(req.session.logueado)req.session.logueado = 0;
+    res.writeHead(301,
+        {Location: './'}
+    );
+    res.end();
+
+
+
+})
 
 module.exports = router;
