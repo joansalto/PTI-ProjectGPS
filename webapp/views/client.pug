@@ -21,16 +21,22 @@ block content
                                 a(href='./') Principal
 
                             li
-                                a(href='#') Raspberry
+                                a(href='./rasp ') Raspberry
                             li.active
                                 a(href='./client') Clientes
                                     span.sr-only Actual
                         ul.nav.navbar-nav.navbar-right
                             li
-                                a(href='./login/logout') Cerrar sesión
+                                a(href='./login/logout/') Cerrar sesión
                                     span.glyphicon.glyphicon-log-out(aria-hidden= 'true')
 
             .main.container
+                .row
+                    div.col-md-11
+                        h1 Clientes
+                    div.col-md-1
+                        br
+                        a.btn.btn-success(href='#myModal' , data-toggle="modal") Añadir
                 .row
                     br
                     table.table.table-bordered.table-responsive.table-hover
@@ -62,3 +68,13 @@ block content
                                     td
                                         button.btn.btn-danger.btn-xs
                                             span.glyphicon.glyphicon-remove(aria-hidden= 'true')
+        #myModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true")
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                        h4.modal-title Modal Title
+                    .modal-body
+                        p Body Content
+                    .modal-footer
+                        button.btn.btn-default(type="button", data-dismiss="modal") Close

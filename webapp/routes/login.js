@@ -10,6 +10,7 @@ var mysql = require('mysql'),
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
+    console.log('prueb1');
     res.render('login', {
         correct: '1'});
 });
@@ -17,8 +18,6 @@ router.post('/', function(req, res, next) {
 
     var usuario = req.body.user;
     var pass = req.body.password;
-    console.log("usuario: " + usuario);
-    console.log("password: " + pass);
     var cifrado = md5(pass);
     connection.query('select * from users where user = "'+usuario+'"  and password = "'+cifrado+'"', function (err, result) {
         if (err) throw err;
@@ -39,14 +38,14 @@ router.post('/', function(req, res, next) {
 });
 
 router.get('/logout',function (req,res,next) {
-    if(req.session.logueado)req.session.logueado = 0;
-    res.writeHead(301,
-        {Location: './'}
-    );
-    res.end();
+    req.session.logueado = 0;
+    res.render('login', {
+        correct: '1'});
 
 
 
-})
+});
+
+
 
 module.exports = router;
