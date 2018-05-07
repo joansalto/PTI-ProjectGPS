@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 var login = require('./routes/login');
 var apiRest = require('./routes/ApiRest');
 var client = require('./routes/client');
+var rasp = require('./routes/rasp');
 var app = express();
 
 // view engine setup
@@ -34,6 +35,7 @@ app.use('/users', usersRouter);
 app.use('/login', login);
 app.use('/apiRest', apiRest);
 app.use('/client', client);
+app.use('/rasp', rasp);
 
 
 // catch 404 and forward to error handler
