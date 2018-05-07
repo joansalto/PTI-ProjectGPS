@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
       res.render('index', { title: 'Express' });
   }else{
       res.writeHead(301,
-          {Location: 'http://localhost/login'}
+          {Location: './login'}
       );
       res.end();
   }
