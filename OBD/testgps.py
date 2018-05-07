@@ -16,4 +16,5 @@ def get_gps():
 			lon_gps = str(report.lon)
 
 	res = {'alt':alt_gps, 'lon':lon_gps}
+	print(res)
 	return json.dumps(res)

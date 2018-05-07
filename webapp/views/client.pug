@@ -6,25 +6,59 @@ block content
             title= "Clientes"
             link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
         body
+            nav.navbar.navbar-inverse.navbar-fixed-top
+                div.container_fluid
+                    div.navbar-header
+                        button.navbar-toggle.collapsed(type = "button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false")
+                            span.sr-only Toggle navigation
+                            span.icon-bar
+                            span.icon-bar
+                            span.icon-bar
+                        a.navbar-brand(href='#') CarLocator
+                    div.collapse.navbar-collapse
+                        ul.nav.navbar-nav
+                            li
+                                a(href='./') Principal
+
+                            li
+                                a(href='#') Raspberry
+                            li.active
+                                a(href='./client') Clientes
+                                    span.sr-only Actual
+                        ul.nav.navbar-nav.navbar-right
+                            li
+                                a(href='./login/logout') Cerrar sesión
+                                    span.glyphicon.glyphicon-log-out(aria-hidden= 'true')
+
             .main.container
                 .row
-                        table.table-bordered.table-responsive.table-hover
-                            thead
-                                .active
-                                    tr
-                                        th ID
-                                        th DNI
-                                        th Nombre
-                                        th Apellido
-                                        th Telefono
-                                        th Email
-                                        th Fecha Nacimiento
-                            tbody
-                                each item in rows
-                                    tr
-                                        td= item.ID
-                                        td= item.DNI
-                                        td= item.Nombre
-                                        td= item.Apellido
-                                        td= item.Email
-                                        td= item.FecjaNacimiento
+                    br
+                    table.table.table-bordered.table-responsive.table-hover
+                        thead
+                            .active
+                                tr
+                                    th ID
+                                    th DNI
+                                    th Nombre
+                                    th Apellido
+                                    th Telefono
+                                    th Email
+                                    th Fecha Nacimiento
+                                    th Editar
+                                    th Eliminar
+                        tbody
+                            each item in rows
+                                tr
+                                    td= item.ID
+                                    td= item.DNI
+                                    td= item.Nombre
+                                    td= item.Apellido
+                                    td= item.Telefono
+                                    td= item.EMAIL
+                                    td= item.FechaNacimiento.toDateString()
+                                    td
+                                        button.btn.btn-primary.btn-xs
+                                            span.glyphicon.glyphicon-edit(aria-hidden= 'true')
+                                    td
+                                        button.btn.btn-danger.btn-xs
+                                            span.glyphicon.glyphicon-remove(aria-hidden= 'true')

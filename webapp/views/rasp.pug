@@ -3,8 +3,8 @@ extends layout
 block content
     html
         head
-          title=title
-          link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
+            title= "Clientes"
+            link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
         body
             nav.navbar.navbar-inverse.navbar-fixed-top
                 div.container_fluid
@@ -17,21 +17,30 @@ block content
                         a.navbar-brand(href='#') CarLocator
                     div.collapse.navbar-collapse
                         ul.nav.navbar-nav
-                            li.active
+                            li
                                 a(href='./') Principal
-                                    span.sr-only Actual
+
                             li
                                 a(href='./rasp') Raspberry
-                            li
+                            li.active
                                 a(href='./client') Clientes
+                                    span.sr-only Actual
                         ul.nav.navbar-nav.navbar-right
                             li
                                 a(href='./login/logout') Cerrar sesión
                                     span.glyphicon.glyphicon-log-out(aria-hidden= 'true')
 
-
-
-
-
-
+            .main.container
+                .row
+                        table.table.table-bordered.table-responsive.table-hover
+                            thead
+                                .active
+                                    tr
+                                        th RaspberryID
+                                        th DNI
+                            tbody
+                                each item in rows
+                                    tr
+                                        td= item.RaspID
+                                        td= item.DNI
 

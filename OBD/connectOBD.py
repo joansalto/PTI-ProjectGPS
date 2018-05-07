@@ -1,6 +1,6 @@
 #!/bin/sh
 
-import obd, os, datetime, time, os, json, sys, logging,csv,os.path
+import obd, os, datetime, time, os, json, requests, sys, logging,csv,os.path
 from obd import OBDStatus
 from time import time
 
@@ -12,6 +12,7 @@ rpm = obd.commands.RPM											  #
 fuel_lvl = obd.commands.FUEL_LEVEL								  #
 run_time = obd.commands.RUN_TIME								  #
 distance = obd.commands.DISTANCE_W_MIL							  #
+id = 0
 ###################################################################
 
 def init_config():
@@ -35,8 +36,7 @@ def write_csv(ahora, data_speed, data_rpm, data_lvl, data_time, data_distance):
 
 
 def send(ahora, data_speed, data_rpm, data_lvl, data_time, data_distance):
-	json_data = {"data": str(ahora)[0:19], "speed": data_speed,"rpm":data_rpm, "lvl":data_lvl, "time":data_time, "distance": data_distance}
-	print json_data #comentario
+	json_data = {"data": str(ahora)[0:19], "speed": data_speed,"rpm":data_rpm, "lvl":data_lvl, "time":data_time, "distance": data_distance}	
 	headers = {'Content-type': 'application/json'}
 	try:
 		r = requests.post(url, data=json.dumps(json_data), headers=headers)
@@ -86,7 +86,7 @@ def comprobar_conexion():
 def imprimir_dato(cmd):
 	response = connection.query(cmd) # send the command, and parse the response
 	#print (response.value) # returns unit-bearing values thanks to Pint
-	return response.value
+	return response.value.to("")
 
 
 #######################################MAIN#######################################3
