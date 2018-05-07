@@ -32,24 +32,33 @@ block content
 
             .main.container
                 .row
-                        table.table.table-bordered.table-responsive.table-hover
-                            thead
-                                .active
-                                    tr
-                                        th ID
-                                        th DNI
-                                        th Nombre
-                                        th Apellido
-                                        th Telefono
-                                        th Email
-                                        th Fecha Nacimiento
-                            tbody
-                                each item in rows
-                                    tr
-                                        td= item.ID
-                                        td= item.DNI
-                                        td= item.Nombre
-                                        td= item.Apellido
-                                        td= item.Telefono
-                                        td= item.EMAIL
-                                        td= item.FechaNacimiento
+                    br
+                    table.table.table-bordered.table-responsive.table-hover
+                        thead
+                            .active
+                                tr
+                                    th ID
+                                    th DNI
+                                    th Nombre
+                                    th Apellido
+                                    th Telefono
+                                    th Email
+                                    th Fecha Nacimiento
+                                    th Editar
+                                    th Eliminar
+                        tbody
+                            each item in rows
+                                tr
+                                    td= item.ID
+                                    td= item.DNI
+                                    td= item.Nombre
+                                    td= item.Apellido
+                                    td= item.Telefono
+                                    td= item.EMAIL
+                                    td= item.FechaNacimiento.toDateString()
+                                    td
+                                        button.btn.btn-primary.btn-xs
+                                            span.glyphicon.glyphicon-edit(aria-hidden= 'true')
+                                    td
+                                        button.btn.btn-danger.btn-xs
+                                            span.glyphicon.glyphicon-remove(aria-hidden= 'true')
