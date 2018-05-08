@@ -1,46 +1,73 @@
-extends layout
+extends ./navbar
 
 block content
-    html
-        head
-            title= "Clientes"
-            link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
-        body
-            nav.navbar.navbar-inverse.navbar-fixed-top
-                div.container_fluid
-                    div.navbar-header
-                        button.navbar-toggle.collapsed(type = "button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false")
-                            span.sr-only Toggle navigation
-                            span.icon-bar
-                            span.icon-bar
-                            span.icon-bar
-                        a.navbar-brand(href='#') CarLocator
-                    div.collapse.navbar-collapse
-                        ul.nav.navbar-nav
-                            li
-                                a(href='./') Principal
+    .main.container
+        .row
+            div.col-md-11
+                h1 Raspberrys
+            div.col-md-1
+                br
+                button.btn.btn-success(type="button", onclick="abrir();") Añadir
+        .row
+            br
+            table.table.table-bordered.table-responsive.table-hover
+                thead
+                    .active
+                        tr
+                            th RaspberryID
+                            th DNI
+                            th(style="width:1%;text-align:center;") Opciones
+                            th(style="width:1%;text-align:center;") Eliminar
+                tbody
+                    each item in rows
+                        tr
+                            td= item.RaspID
+                            td= item.DNI
+                            td(style="text-align:center;")
+                                if item.DNI == null
+                                    button.btn.btn-primary.btn-xs(onclick="asociar();")
+                                        span.glyphicon.glyphicon-tag(aria-hidden= 'true')
+                                else
+                                    button.btn.btn-warning.btn-xs(onclick="desasociar();")
+                                        span.glyphicon.glyphicon-fire(aria-hidden= 'true')
+                            td(style="text-align:center;")
+                                button.btn.btn-danger.btn-xs(onclick="eliminar();")
+                                    span.glyphicon.glyphicon-remove(aria-hidden= 'true')
 
-                            li
-                                a(href='./rasp') Raspberry
-                            li.active
-                                a(href='./client') Clientes
-                                    span.sr-only Actual
-                        ul.nav.navbar-nav.navbar-right
-                            li
-                                a(href='./login/logout') Cerrar sesión
-                                    span.glyphicon.glyphicon-log-out(aria-hidden= 'true')
+    div.modal.fade(id="desasociar" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Desasociar cliente
+                .modal-body
+                    b ¿Está seguro que quiere desasociar el cliente de esta Raspberry?
+                    p Esta acción no se podrá deshacer.
+                .modal-footer
+                    button.btn.btn-danger(type="button" id="modalDesasociar" onclick="valida_desasociar()") Desasociar
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
 
-            .main.container
-                .row
-                        table.table.table-bordered.table-responsive.table-hover
-                            thead
-                                .active
-                                    tr
-                                        th RaspberryID
-                                        th DNI
-                            tbody
-                                each item in rows
-                                    tr
-                                        td= item.RaspID
-                                        td= item.DNI
+    div.modal.fade(id="asociar" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Asociar cliente
+                .modal-body
+                    form(method="post" id="formasociar" action="../client/asociar_cliente")
+                        .row
+                            div.dropdown.col-md-6
+                                label(for="DNI") DNI
+                                input.form-control(name="dni", id="DNI", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_dni")
 
+                .modal-footer
+                    button.btn.btn-danger(type="button" id="modalAsociar" onclick="valida_asociar()") Asociar
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
+    script.
+        function desasociar() {
+            $('#desasociar').modal('show');
+        }
+        function asociar() {
+            $('#asociar').modal('show');
+        }
