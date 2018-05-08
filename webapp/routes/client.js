@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
 
     connection.query(sql, function(err, rows, fields) {
         if (err) throw err;
-        res.render('client', { title: 'Client', rows: rows });
+        res.render('client', { title: 'Clientes', menu: 'clientes', rows: rows });
     });
 });
 
