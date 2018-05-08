@@ -1,8 +1,14 @@
 doctype html
-html
+html(lang='es')
     head
+        meta(charset='utf-8')
         title= "Clientes"
-        link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
+        link(href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', rel='stylesheet', integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
+        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" )
+        script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
+        link( href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" rel='stylesheet')
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js")
+
     body
         nav.navbar.navbar-inverse.navbar-fixed-top
             div.container_fluid
@@ -15,13 +21,27 @@ html
                     a.navbar-brand(href='#') CarLocator
                 div.collapse.navbar-collapse
                     ul.nav.navbar-nav
-                        li
-                            a(href='../') Principal
-                        li
-                            a(href='../rasp/ ') Raspberry
-                        li.active
-                            a(href='../client/') Clientes
-                                span.sr-only Actual
+                        if menu === "principal"
+                            li.active
+                                a(href='../') Principal
+                                    span.sr-only Actual
+                        else
+                            li
+                                a(href='../') Principal
+                        if menu === "raspberry"
+                            li.active
+                                a(href='../rasp/ ') Raspberry
+                                    span.sr-only Actual
+                        else
+                            li
+                                a(href='../rasp/ ') Raspberry
+                        if menu === "clientes"
+                            li.active
+                                a(href='../client/') Clientes
+                                    span.sr-only Actual
+                        else
+                            li
+                                a(href='../client/') Clientes
                     ul.nav.navbar-nav.navbar-right
                         li
                             a(href='./login/logout/') Cerrar sesión

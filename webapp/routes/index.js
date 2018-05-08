@@ -4,7 +4,7 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if(req.session.logueado){
-      res.render('index', { title: 'Express' });
+      res.render('index', { title: 'Carlocator', menu:'principal' });
   }else{
       res.writeHead(301,
           {Location: './login'}

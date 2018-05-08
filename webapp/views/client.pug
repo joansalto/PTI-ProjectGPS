@@ -1,41 +1,144 @@
 extends ./navbar
 
 block content
-        .main.container
-                .row
-                    div.col-md-11
-                        h1 Clientes
-                    div.col-md-1
-                        br
-                        a.btn.btn-success(href='#myModal' , data-toggle="modal") Añadir
-                .row
+    div.modal.fade(id="myModal" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Añadir Clientes.
+                .modal-body
+                    form(method="post" id="formclientes" action="../client/anadir_cliente")
+                        .row
+                            div.form-group.col-md-6
+                                label(for="DNI") DNI
+                                input.form-control(name="dni", id="DNI", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_dni")
+                            div.form-group.col-md-6
+                                label(for="fechaNacimiento") Fecha Nacimiento
+                                input.form-control(name="fechaNacimiento", id="fechaNacimiento", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_fechaNacimiento")
+                        .row
+                            div.form-group.col-md-6
+                                label(for="nombre") Nombre
+                                input.form-control(name="nombre", id="nombre", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_nombre")
+                            div.form-group.col-md-6
+                                label(for="nombre") Apellidos
+                                input.form-control(name="apellido", id="apellido", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_apellido")
+                        .row
+                            div.form-group.col-md-6
+                                label(for="telefono") Telefono
+                                input.form-control(name="telefono", id="telefono", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_telefono")
+                            div.form-group.col-md-6
+                                label(for="email") Email
+                                input.form-control(name="email", id="email", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_email")
+
+                .modal-footer
+                    button.btn.btn-success(type="button" id="modalBoton" onclick="anadir_user()") Añadir
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
+    div.modal.fade(id="eliminarCliente" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Eliminar Cliente
+                .modal-body
+                  b ¿Está seguro que quiere eliminar el cliente?
+                  p Esta acción no se podrá deshacer.
+                .modal-footer
+                    button.btn.btn-danger(type="button" id="modalEliminar" onclick="valida_eliminar()") Eliminar
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
+
+
+    .main.container
+            .row
+                div.col-md-11
+                    h1 Clientes
+                div.col-md-1
                     br
-                    table.table.table-bordered.table-responsive.table-hover
-                        thead
-                            .active
-                                tr
-                                    th ID
-                                    th DNI
-                                    th Nombre
-                                    th Apellido
-                                    th Telefono
-                                    th Email
-                                    th Fecha Nacimiento
-                                    th Editar
-                                    th Eliminar
-                        tbody
-                            each item in rows
-                                tr
-                                    td= item.ID
-                                    td= item.DNI
-                                    td= item.Nombre
-                                    td= item.Apellido
-                                    td= item.Telefono
-                                    td= item.EMAIL
-                                    td= item.FechaNacimiento.toDateString()
-                                    td
-                                        button.btn.btn-primary.btn-xs
-                                            span.glyphicon.glyphicon-edit(aria-hidden= 'true')
-                                    td
-                                        button.btn.btn-danger.btn-xs
-                                            span.glyphicon.glyphicon-remove(aria-hidden= 'true')
+                    button.btn.btn-success(type="button", onclick="abrir();") Añadir
+            .row
+                br
+                table.table.table-bordered.table-responsive.table-hover
+                    thead
+                        .active
+                            tr
+                                th ID
+                                th DNI
+                                th Nombre
+                                th Apellido
+                                th Telefono
+                                th Email
+                                th Fecha Nacimiento
+                                th Editar
+                                th Eliminar
+                    tbody
+                        each item in rows
+                            tr
+                                td= item.ID
+                                td= item.DNI
+                                td= item.Nombre
+                                td= item.Apellido
+                                td= item.Telefono
+                                td= item.EMAIL
+                                td= item.FechaNacimiento.toDateString()
+                                td
+                                    button.btn.btn-primary.btn-xs
+                                        span.glyphicon.glyphicon-edit(aria-hidden= 'true')
+                                td
+                                    button.btn.btn-danger.btn-xs
+                                        span.glyphicon.glyphicon-remove(aria-hidden= 'true')
+    script.
+        function abrir(){
+            $('#myModal').modal('show');
+        }
+        $(function () {
+            $('#fechaNacimiento').datepicker({dateFormat:'DD-MM-YY'});
+        });
+        function anadir_user() {
+            var valido = true;
+            var dni = $('#DNI').val();
+            var nombre = $('#nombre').val();
+            var apellido = $('#apellido').val();
+            var telefono = $('#telefono').val();
+            var  email= $('#email').val();
+            var  fechaNacimiento= $('#fechaNacimiento').val();
+            if(dni === ""){
+                valido = false;
+                $('#error_dni').html("Dni no puede estar vacio.");
+                $('#error_dni').css("display", "");
+            }
+            if (nombre === "") {
+                valido = false;
+                $('#error_nombre').html("Nombre no puede estar vacio.");
+                $('#error_nombre').css("display", "");
+            }
+            if (apellido === "") {
+                valido = false;
+                $('#error_apellido').html("Apellido no puede estar vacio.");
+                $('#error_apellido').css("display", "");
+            }
+            if (telefono === "") {
+                valido = false;
+                $('#error_telefono').html("Telefono no puede estar vacio.");
+                $('#error_telefono').css("display", "");
+            }
+            if (email === "") {
+                valido = false;
+                $('#error_email').html("Email no puede estar vacio.");
+                $('#error_email').css("display", "");
+            }
+            if (fechaNacimiento === "") {
+                valido = false;
+                $('#error_fechaNacimiento').html("Fecha nacimiento no puede estar vacio.");
+                $('#error_fechaNacimiento').css("display", "");
+            }
+            if (valido) {
+                $('#formclientes').submit();
+            }
+
+        }

@@ -10,7 +10,6 @@ var mysql = require('mysql'),
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-    console.log('prueb1');
     res.render('login', {
         correct: '1'});
 });
