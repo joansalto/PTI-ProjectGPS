@@ -147,13 +147,13 @@ block content
                     fechaNacimiento:fechaNacimiento
 
                 }, function (data) {
-                    var datos = parseJSON(data);
+                    var datos = data
                     if(datos.estado === "ok"){
                         $('#myModal').modal('show');
                         location.reload();
                     }else{
-                        if(datos.dni !== "ok") {
-                            $('#error_dni').html(datos.dni);
+                        if(datos.DNI !== "ok") {
+                            $('#error_dni').html(datos.DNI);
                             $('#error_dni').css("display", "");
                         }
                         if (datos.nombre !== "ok") {
@@ -172,8 +172,8 @@ block content
                             $('#error_email').html(datos.telefono);
                             $('#error_email').css("display", "");
                         }
-                        if (datos.fechaNacimiento !== "ok") {
-                            $('#error_fechaNacimiento').html(datos.fechaNacimiento);
+                        if (datos.data !== "ok") {
+                            $('#error_fechaNacimiento').html(datos.data);
                             $('#error_fechaNacimiento').css("display", "");
                         }
                     }

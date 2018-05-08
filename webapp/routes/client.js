@@ -27,20 +27,20 @@ module.exports = router;
 
 router.post('/alta_cliente', function(req, res, next){
 
-    var sql = 'INSERT INTO ClientData (DNI, Nombre, Apellido, Telefono, EMAIL, FechaNacimiento) VALUES (?)'
-    var dni = req.dni;
+
+    var dni = req.body.dni;
     var bdni= checkDNI(dni);
-    var nombre = req.nombre;
+    var nombre = req.body.nombre;
     var bnom = checkNombre(nombre);
-    var apellido = req.apellido;
+    var apellido = req.body.apellido;
     var bape = checkApellido(apellido);
-    var telefono = req.telefono;
+    var telefono = req.body.telefono;
     var btel = checkTelefono(telefono);
-    var email = req.email;
+    var email = req.body.email;
     var bemail = checkEmail(email);
 
     //DD-MM-YYYY -> YYYY-DD-MM
-    var fechaNacimineto = swapData(req.fechaNacimiento);
+    var fechaNacimineto = swapData(req.body.fechaNacimiento);
     var bdata = isValidData(fechaNacimineto);
 
     var ball = "Datos incorrectos";
@@ -58,22 +58,24 @@ router.post('/alta_cliente', function(req, res, next){
         }
     }
 
-    var json = "{'estado': '"+ball+"','DNI':'"+bdni+"','nombre':'"+bnom+"','apellido':'"+bape+"','telefono':'"+btel+"','email':'"+bemail+"','data':'"+bdata+"'}";
+    var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
 
 
     var values = "'" + dni + "','" + nombre + "','" + apellido + "','" + telefono + "','" + email + "','" + fechaNacimineto +"'";
-
+    var sql = 'INSERT INTO ClientData (DNI, Nombre, Apellido, Telefono, EMAIL, FechaNacimiento) VALUES ('+values+')';
     if(ball==="ok") {
-        connection.query(sql, values, function (err, result) {
 
+        connection.query(sql, values, function (err, result) {
+            console.log(sql);
             if (err) throw err;
 
         });
     }
-    var obj = JSON.parse(json);
 
-    res.send(obj)
-}
+    //var obj = JSON.parse(json);
+
+    res.send(json);
+});
 
 
 
@@ -95,7 +97,7 @@ function checkApellido(str){
 
 function checkTelefono(str){
     if(typeof str != 'string' || str === "") return "Datos incorrectos";
-    for (var i = 0; i < str.length(); i++ ){
+    for (var i = 0; i < str.length; i++ ){
         if (str[i] < '0' && str[i] > [9]) return "Telefono no puede contener caracteres no numericos"
     }
     return "ok";
@@ -106,8 +108,14 @@ function checkEmail(str){
 }
 
 function swapData(str){
-    var arr = str.split("-");
-    return arr[2] + "-" + arr[0] + "-" + arr[1];
+    console.log(str);
+    var arr0 = str.substr(0,2);
+    var arr1 = str.substr(3,2);
+    var arr2 = str.substr(6,4);
+    console.log(arr0);
+    console.log(arr1);
+    console.log(arr2);
+    return arr2 + "-" + arr0 + "-" + arr1;
 
 }
 
