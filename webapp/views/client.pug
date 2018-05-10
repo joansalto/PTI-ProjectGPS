@@ -38,7 +38,7 @@ block content
                                 div.alert.alert-danger(style="display:none" id="error_email")
 
                 .modal-footer
-                    button.btn.btn-success(type="button" id="modalBoton" onclick="anadir_user()") Añadir
+                    button.btn.btn-success(type="button" id="botonAnadir" onclick="anadir_user()") Añadir
                     button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
     div.modal.fade(id="eliminarCliente" role="dialog")
         .modal-dialog
@@ -88,14 +88,38 @@ block content
                                 td= item.FechaNacimiento.toDateString()
                                 td
                                     button.btn.btn-primary.btn-xs
-                                        span.glyphicon.glyphicon-edit(aria-hidden= 'true')
+                                        span.glyphicon.glyphicon-edit(aria-hidden= 'true',onclick="abrir_editar('"+item.ID+"')")
                                 td
                                     button.btn.btn-danger.btn-xs
                                         span.glyphicon.glyphicon-remove(aria-hidden= 'true', onclick="validar_eliminar('"+item.ID+"')")
     script.
         function abrir(){
+            $('#DNI').val("");
+            $('#nombre').val("");
+            $('#apellido').val("");
+            $('#telefono').val("");
+            $('#email').val("");
+            $('#fechaNacimiento').val("");
+            $('#botonAnadir').css("btn-primary", "btn-success");
+            $('#botonAnadir').html("Añadir");
             $('#myModal').modal('show');
 
+        }
+        function abrir_editar(id){
+            $.post('../client/buscar_cliente', {
+                id: id
+            }, function (data) {
+                $('#DNI').val(data.DNI);
+                $('#nombre').val(data.nombre);
+                $('#apellido').val(data.apellido);
+                $('#telefono').val(data.telefono);
+                $('#email').val(data.email);
+                $('#fechaNacimiento').val(data.data);
+            });
+            $('#botonAnadir').css("btn-success", "btn-primary");
+            $('#botonAnadir').html("Editar");
+            $("#botonAnadir").attr("onclick", "editar_cliente('" + id + "')");
+            $('#myModal').modal('show');
         }
         $(function () {
             $('#tabla').DataTable();
@@ -195,4 +219,54 @@ block content
                 $('#eliminarCliente').modal('hide');
                 location.reload();
             });
+        }
+        function editar_cliente(id) {
+            var dni = $('#DNI').val();
+            var nombre = $('#nombre').val();
+            var apellido = $('#apellido').val();
+            var telefono = $('#telefono').val();
+            var email = $('#email').val();
+            var fechaNacimiento = $('#fechaNacimiento').val();
+            $.post('../client/alta_cliente', {
+                id : id,
+                dni: dni,
+                nombre: nombre,
+                apellido: apellido,
+                telefono: telefono,
+                email: email,
+                fechaNacimiento: fechaNacimiento
+
+            }, function (data) {
+                var datos = data
+                if (datos.estado === "ok") {
+                    $('#myModal').modal('show');
+                    location.reload();
+                } else {
+                    if (datos.DNI !== "ok") {
+                        $('#error_dni').html(datos.DNI);
+                        $('#error_dni').css("display", "");
+                    }
+                    if (datos.nombre !== "ok") {
+                        $('#error_nombre').html(datos.nombre);
+                        $('#error_nombre').css("display", "");
+                    }
+                    if (datos.apellido !== "ok") {
+                        $('#error_apellido').html(datos.apellido);
+                        $('#error_apellido').css("display", "");
+                    }
+                    if (datos.telefono !== "ok") {
+                        $('#error_telefono').html(datos.telefono);
+                        $('#error_telefono').css("display", "");
+                    }
+                    if (datos.email !== "ok") {
+                        $('#error_email').html(datos.telefono);
+                        $('#error_email').css("display", "");
+                    }
+                    if (datos.data !== "ok") {
+                        $('#error_fechaNacimiento').html(datos.data);
+                        $('#error_fechaNacimiento').css("display", "");
+                    }
+                }
+            });
+
         }

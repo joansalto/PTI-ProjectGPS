@@ -23,7 +23,12 @@ router.get('/', function(req, res, next) {
     });
 });
 
-module.exports = router;
+
+
+
+
+
+
 
 router.post('/alta_cliente', function(req, res, next){
 
@@ -92,13 +97,16 @@ router.post('/baja_cliente', function (req, res, next) {
 });
 
 router.post('/buscar_cliente', function (req,res,next) {
-    var sql = "SELECT * FROM ClientData WHERE clientId = '?' ";
-    var id = req.body.clientId;
+
+    var id = req.body.id;
+    var sql = "SELECT * FROM ClientData WHERE ID = '"+id+"' ";
+
 
     connection.query(sql, id, function (err, result) {
-        console.log(sql);
         if (err) throw err;
-
+        var fecha = swapDataFront(result[0].FechaNacimiento.toString());
+        var json = {'ID':result[0].ID,'DNI': result[0].DNI,'nombre': result[0].Nombre,'apellido':result[0].Apellido,'telefono':result[0].Telefono,'email':result[0].EMAIL,'data':fecha};
+        res.send(json);
     });
 
     
@@ -106,6 +114,10 @@ router.post('/buscar_cliente', function (req,res,next) {
 });
 
 
+
+
+
+module.exports = router;
 function checkDNI(str){
     if(typeof str != 'string' || str === "") return "Datos incorrectos";
     //Falta comprobar q DNI no esta dentro de BDD
@@ -136,14 +148,18 @@ function checkEmail(str){
 }
 
 function swapData(str){
-    console.log(str);
     var arr0 = str.substr(0,2);
     var arr1 = str.substr(3,2);
     var arr2 = str.substr(6,4);
-    console.log(arr0);
-    console.log(arr1);
-    console.log(arr2);
     return arr2 + "-" + arr0 + "-" + arr1;
+
+}
+function swapDataFront(str){
+    //YYYY-MM-DD
+    var arr0 = str.substr(0,4);
+    var arr1 = str.substr(5,2);
+    var arr2 = str.substr(8,2);
+    return arr1 + "-" + arr2 + "-" + arr0;
 
 }
 
