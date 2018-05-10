@@ -113,7 +113,56 @@ router.post('/buscar_cliente', function (req,res,next) {
 
 });
 
+router.post('/update_cliente', function(req, res, next){
 
+
+    var dni = req.body.dni;
+    var bdni= checkDNI(dni);
+    var nombre = req.body.nombre;
+    var bnom = checkNombre(nombre);
+    var apellido = req.body.apellido;
+    var bape = checkApellido(apellido);
+    var telefono = req.body.telefono;
+    var btel = checkTelefono(telefono);
+    var email = req.body.email;
+    var bemail = checkEmail(email);
+
+    //DD-MM-YYYY -> YYYY-DD-MM
+    var fechaNacimineto = swapData(req.body.fechaNacimiento);
+    var bdata = isValidData(fechaNacimineto);
+
+    var ball = "Datos incorrectos";
+    if( bdni === "ok") {
+        if (bnom === "ok") {
+            if (bape === "ok") {
+                if (btel === "ok") {
+                    if (bemail === "ok") {
+                        if (bdata === "ok") {
+                            ball = "ok";
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
+
+
+
+    var sql = "'UPDATE ClientData SET DNI = '"+bdni+"', Nombre = '"+bnom+"', Apellido = '"+bape+"', Telefono = '"+btel+"', EMAIL = '"+bemail+"', FechaNacimiento ='"+bdata+"' WHERE ID = '"+req.body.id+"'";
+    if(ball==="ok") {
+
+        connection.query(sql, function (err, result) {
+            if (err) throw console.log("Error SQL");
+
+        });
+    }
+
+    //var obj = JSON.parse(json);
+
+    res.send(json);
+});
 
 
 
