@@ -77,10 +77,38 @@ router.post('/alta_cliente', function(req, res, next){
     res.send(json);
 });
 
+router.post('/baja_cliente', function (req, res, next) {
+
+    var sql = "DELETE FROM ClientData WHERE clientId = '?' ";
+    var elim = req.body.clientId;
+
+
+    connection.query(sql, elim, function (err, result) {
+        console.log(sql);
+        if (err) throw err;
+
+    });
+    res.send({'estado':'ok'});
+});
+
+router.post('/buscar_cliente', function (req,res,next) {
+    var sql = "SELECT * FROM ClientData WHERE clientId = '?' ";
+    var id = req.body.clientId;
+
+    connection.query(sql, id, function (err, result) {
+        console.log(sql);
+        if (err) throw err;
+
+    });
+
+    
+
+});
 
 
 function checkDNI(str){
     if(typeof str != 'string' || str === "") return "Datos incorrectos";
+    //Falta comprobar q DNI no esta dentro de BDD
     return "ok";
 }
 
