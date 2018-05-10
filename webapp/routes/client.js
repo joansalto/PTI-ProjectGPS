@@ -82,56 +82,6 @@ router.post('/alta_cliente', function(req, res, next){
 });
 
 
-router.post('/buscar_cliente', function(req, res, next){
-
-
-    var dni = req.body.dni;
-    var bdni= checkDNI(dni);
-    var nombre = req.body.nombre;
-    var bnom = checkNombre(nombre);
-    var apellido = req.body.apellido;
-    var bape = checkApellido(apellido);
-    var telefono = req.body.telefono;
-    var btel = checkTelefono(telefono);
-    var email = req.body.email;
-    var bemail = checkEmail(email);
-
-    //DD-MM-YYYY -> YYYY-DD-MM
-    var fechaNacimineto = swapData(req.body.fechaNacimiento);
-    var bdata = isValidData(fechaNacimineto);
-
-    var ball = "Datos incorrectos";
-    if( bdni === "ok") {
-        if (bnom === "ok") {
-            if (bape === "ok") {
-                if (btel === "ok") {
-                    if (bemail === "ok") {
-                        if (bdata === "ok") {
-                            ball = "ok";
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
-
-
-
-    var sql = "'UPDATE ClientData SET DNI = '"+bdni+"', Nombre = '"+bnom+"', Apellido = '"+bape+"', Telefono = '"+btel+"', EMAIL = '"+bemail+"', FechaNacimiento ='"+bdata+"' WHERE ID = '"+req.body.id+"'";
-    if(ball==="ok") {
-
-        connection.query(sql, function (err, result) {
-            if (err) throw console.log("Error SQL");
-
-        });
-    }
-
-    //var obj = JSON.parse(json);
-
-    res.send(json);
-});
 
 
 router.post('/baja_cliente', function (req, res, next) {
@@ -154,18 +104,15 @@ router.post('/buscar_cliente', function (req,res,next) {
     var id = req.body.id;
     var sql = "SELECT * FROM ClientData WHERE ID = '"+id+"' ";
 
-    var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
 
-    if(ball==="ok") {
+    connection.query(sql, id, function (err, result) {
+        if (err) throw err;
+        var fecha = swapDataFront(result[0].FechaNacimiento.toString());
+        var json = {'ID':result[0].ID,'DNI': result[0].DNI,'nombre': result[0].Nombre,'apellido':result[0].Apellido,'telefono':result[0].Telefono,'email':result[0].EMAIL,'data':fecha};
+        res.send(json);
+    });
 
-        connection.query(sql, function (err, result) {
-            if (err) throw console.log("Error SQL");
 
-        });
-    }
-
-    res.send(json);
-    
 
 });
 
