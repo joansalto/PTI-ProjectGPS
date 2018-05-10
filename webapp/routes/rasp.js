@@ -25,3 +25,15 @@ router.get('/', function(req, res, next) {
 
 module.exports = router;
 
+router.post('/desasociar', function(req, res, next){
+    var RaspID = req.body.RaspID;
+    console.log(RaspID);
+    var sql = 'UPDATE Rasps SET ClientID = NULL WHERE RaspID ="'+RaspID+'"';
+    connection.query(sql, function (err, result) {
+        console.log(sql);
+        if (err) throw err;
+
+    });
+    res.end();
+
+});
