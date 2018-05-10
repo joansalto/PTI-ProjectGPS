@@ -113,7 +113,7 @@ router.post('/buscar_cliente', function (req,res,next) {
 
 });
 
-router.post('/update_cliente', function(req, res, next){
+router.post('/editar_cliente', function(req, res, next){
 
 
     var dni = req.body.dni;
