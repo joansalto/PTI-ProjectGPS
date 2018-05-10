@@ -107,7 +107,7 @@ router.post('/buscar_cliente', function (req,res,next) {
 
     connection.query(sql, id, function (err, result) {
         if (err) throw err;
-        var fecha = swapDataFront(result[0].FechaNacimiento.toString());
+        var fecha = swapDataFront(result[0].FechaNacimiento);
         var json = {'ID':result[0].ID,'DNI': result[0].DNI,'nombre': result[0].Nombre,'apellido':result[0].Apellido,'telefono':result[0].Telefono,'email':result[0].EMAIL,'data':fecha};
         res.send(json);
     });
@@ -153,11 +153,12 @@ router.post('/editar_cliente', function(req, res, next){
 
 
 
-    var sql = "'UPDATE ClientData SET DNI = '"+bdni+"', Nombre = '"+bnom+"', Apellido = '"+bape+"', Telefono = '"+btel+"', EMAIL = '"+bemail+"', FechaNacimiento ='"+bdata+"' WHERE ID = '"+req.body.id+"'";
+    var sql = "UPDATE ClientData SET DNI = '"+dni+"', Nombre = '"+nombre+"', Apellido = '"+apellido+"', Telefono = '"+telefono+"', EMAIL = '"+email+"', FechaNacimiento ='"+fechaNacimineto+"' WHERE ID = "+req.body.id;
     if(ball==="ok") {
 
         connection.query(sql, function (err, result) {
-            if (err) throw console.log("Error SQL");
+            console.log(sql);
+            if (err) throw err;
 
         });
     }
@@ -203,20 +204,22 @@ function swapData(str){
     var arr0 = str.substr(0,2);
     var arr1 = str.substr(3,2);
     var arr2 = str.substr(6,4);
-    return arr2 + "-" + arr0 + "-" + arr1;
+    return arr2 + "-" + arr1 + "-" + arr0;
 
 }
 function swapDataFront(str){
     //YYYY-MM-DD
+    str = str.toISOString();
     var arr0 = str.substr(0,4);
     var arr1 = str.substr(5,2);
     var arr2 = str.substr(8,2);
-    return arr1 + "-" + arr2 + "-" + arr0;
+    return arr2 + "-" + arr1 + "-" + arr0;
 
 }
 
 function isValidData(str){
     // STRING FORMAT yyyy-mm-dd
+    console.log(str);
     if(str=="" || str==null){return "Datos incorrectos";}
 
     // m[1] is year 'YYYY' * m[2] is month 'MM' * m[3] is day 'DD'
@@ -227,7 +230,7 @@ function isValidData(str){
 
     // CHECK m TYPE
     if (typeof m !== 'object' && m !== null && m.size!==3){return false;}
-
+    return 'ok';
     var ret = "ok"; //RETURN VALUE
     var thisYear = new Date().getFullYear(); //YEAR NOW
     var minYear = 1900; //MIN YEAR
@@ -238,6 +241,6 @@ function isValidData(str){
     if( (m[2].length < 2) || m[2] < 1 || m[2] > 12){ret = "Mes inexistente";}
     // DAY CHECK
     if( (m[3].length < 2) || m[3] < 1 || m[3] > 31){ret = "Dia Inexistente";}
-
+    console.log(m[3] +'-'+ m[2]+'-'+m[1]);
     return ret;
 }

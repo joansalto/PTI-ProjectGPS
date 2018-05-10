@@ -67,15 +67,15 @@ block content
                     thead
                         .active
                             tr
-                                th ID
-                                th DNI
-                                th Nombre
-                                th Apellido
-                                th Telefono
-                                th Email
-                                th Fecha Nacimiento
-                                th Editar
-                                th Eliminar
+                                th(style="text-align:center") ID
+                                th(style="text-align:center") DNI
+                                th(style="text-align:center") Nombre
+                                th(style="text-align:center") Apellido
+                                th(style="text-align:center") Telefono
+                                th(style="text-align:center") Email
+                                th(style="text-align:center") Fecha Nacimiento
+                                th(style="text-align:center") Editar
+                                th(style="text-align:center") Eliminar
                     tbody
                         each item in rows
                             tr
@@ -85,13 +85,13 @@ block content
                                 td= item.Apellido
                                 td= item.Telefono
                                 td= item.EMAIL
-                                td= item.FechaNacimiento.toDateString()
+                                td(style="text-align:center")= item.FechaNacimiento.toISOString().substr(8,2) + '-' + item.FechaNacimiento.toISOString().substr(5,2) +'-'+ item.FechaNacimiento.toISOString().substr(0,4)
                                 td
-                                    button.btn.btn-primary.btn-xs
-                                        span.glyphicon.glyphicon-edit(aria-hidden= 'true',onclick="abrir_editar('"+item.ID+"')")
+                                    button.btn.btn-primary.btn-xs(onclick="abrir_editar('"+item.ID+"')")
+                                        span.glyphicon.glyphicon-edit(aria-hidden= 'true')
                                 td
-                                    button.btn.btn-danger.btn-xs
-                                        span.glyphicon.glyphicon-remove(aria-hidden= 'true', onclick="validar_eliminar('"+item.ID+"')")
+                                    button.btn.btn-danger.btn-xs(onclick="validar_eliminar('" + item.ID + "')")
+                                        span.glyphicon.glyphicon-remove(aria-hidden= 'true')
     script.
         function abrir(){
             $('#DNI').val("");
@@ -122,8 +122,13 @@ block content
             $('#myModal').modal('show');
         }
         $(function () {
-            $('#tabla').DataTable();
-            $('#fechaNacimiento').datepicker({dateFormat:'DD-MM-YY'});
+            $('#tabla').DataTable({
+                columnDefs: [
+                    {type: 'date-eu', targets: 6}
+                ]
+            });
+            $('#fechaNacimiento').datepicker({
+                format: 'dd-mm-yyyy'});
         });
         function anadir_user() {
             var valido = true;
@@ -227,7 +232,7 @@ block content
             var telefono = $('#telefono').val();
             var email = $('#email').val();
             var fechaNacimiento = $('#fechaNacimiento').val();
-            $.post('../client/alta_cliente', {
+            $.post('../client/editar_cliente', {
                 id : id,
                 dni: dni,
                 nombre: nombre,
