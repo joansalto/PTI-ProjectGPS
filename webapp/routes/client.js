@@ -66,7 +66,6 @@ router.post('/alta_cliente', function(req, res, next){
     if(ball==="ok") {
 
         connection.query(sql, values, function (err, result) {
-            console.log(sql);
             if (err) throw err;
 
         });
@@ -79,8 +78,9 @@ router.post('/alta_cliente', function(req, res, next){
 
 router.post('/baja_cliente', function (req, res, next) {
 
-    var sql = "DELETE FROM ClientData WHERE clientId = '?' ";
-    var elim = req.body.clientId;
+    var elim = req.body.id;
+    var sql = "DELETE FROM ClientData WHERE ID ="+elim;
+
 
 
     connection.query(sql, elim, function (err, result) {
