@@ -73,12 +73,12 @@ block content
                 .modal-body
                     form(method="post" id="formasociar" action="../client/asociar_cliente")
                         .row(style="text-align:center;")
-                                label(for="DNI") DNI
-                                select.form-control(name="dni", id="DNI", required="required", style="width:50%;margin-left:25%;")
+                                label(for="DNI_asociar") DNI
+                                select.form-control(name="DNI_asociar", id="DNI_asociar", required="required", style="width:50%;margin-left:25%;")
                                     option
                                         each item in DNIS
                                              option=item.DNI
-                                div.alert.alert-danger(style="display:none" id="error_dni")
+                                div.alert.alert-danger(style="display:none" id="error_dni_asociar")
 
                 .modal-footer
                     button.btn.btn-primary(type="button" id="modalAsociar" onclick="") Asociar
@@ -98,8 +98,11 @@ block content
                                 input.form-control(name="RaspberryID", id="RaspberryID", required="required")
                                 div.alert.alert-danger(style="display:none" id="error_raspberryID")
                             div.form-group.col-md-6
-                                label(for="DNICliente") DNI Cliente
-                                input.form-control(name="DNICliente", id="DNICliente")
+                                label(for="DNI_añadir") DNI Cliente
+                                select.form-control(name="DNI_añadir", id="DNI_añadir")
+                                    option
+                                        each item in DNIS
+                                            option=item.DNI
                                 div.alert.alert-danger(style="display:none" id="error_DNICliente")
 
                 .modal-footer
@@ -107,12 +110,6 @@ block content
                     button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
 
     script.
-        function SelectDNIS() {
-            $.get('../rasp/DNI', {}, function (data) {
-                $('#desasociar').modal('hide');
-                location.reload();
-            });
-        }
         function validar_desasociar(RaspID) {
             $("#modalDesasociar").attr("onclick","desasociar('"+RaspID+"')");
             $('#desasociar').modal('show');
@@ -142,14 +139,23 @@ block content
             });
         }
         function asociar(RaspID){
-            DNISelected = $('#DNI').val();
-            $.post('../rasp/asociar', {
-                RaspID:RaspID,
-                DNI:DNISelected
-            }, function(data){
-              $('#asociar').modal('hide');
-              location.reload();
-            });
+            valid = true;
+            DNISelected = $('#DNI_asociar').val();
+            $('#DNI_asociar').val('default');
+            if (DNISelected === "") {
+                valid = false;
+                $('#error_dni_asociar').html("DNI no puede estar vacio.");
+                $('#error_dni_asociar').css("display", "");
+            }
+            if (valid ) {
+                $.post('../rasp/asociar', {
+                    RaspID: RaspID,
+                    DNI: DNISelected
+                }, function (data) {
+                    $('#asociar').modal('hide');
+                    location.reload();
+                });
+            }
         }
         function validar_añadir(){
             $('#añadir').modal('show');
@@ -157,14 +163,17 @@ block content
         function anadir_raspberry() {
             var valido = true;
             var RaspID = $('#RaspberryID').val();
-            var DNI = $('#DNICliente').val();
+            $('#RaspberryID').val('');
+            var DNI = $('#DNI_añadir').val();
+            $('#DNI_añadir').val('default');
+
             if (RaspID === "") {
                 valido = false;
                 $('#error_raspberryID').html("Raspberry ID no puede estar vacio.");
                 $('#error_raspberryID').css("display", "");
             }
             if (valido) {
-                $.post('../client/alta_cliente', {
+                $.post('../rasp/anadir_raspberry', {
                         DNI: DNI,
                         RaspID: RaspID
                     },
@@ -174,11 +183,7 @@ block content
                             location.reload();
                         }
                         else {
-                            if (data.DNI !== "ok") {
-                                $('#error_dni').html(data.DNI);
-                                $('#error_dni').css("display", "");
-                            }
-                            if (data.DNI !== "ok") {
+                            if (data.RaspID !== "ok") {
                                 $('#error_RaspberryID').html(data.RaspID);
                                 $('#error_RaspberryID').css("display", "");
                             }

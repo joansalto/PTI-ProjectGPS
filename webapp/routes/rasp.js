@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
         );
         setTimeout(res.end(), 3000);
     }
-    var sql = 'SELECT RaspID,DNI from Rasps left join ClientData on ClientID=ID';
+    var sql = 'SELECT RaspID,DNI from Rasps left join ClientData on ClientID=ID ORDER BY RaspID';
 
 
     connection.query(sql, function(err, rows, fields) {
@@ -25,6 +25,39 @@ router.get('/', function(req, res, next) {
             res.render('rasp', { title: 'Raspberrys', menu: "raspberry", rows: rows, DNIS:DNIS});
         });
     });
+});
+
+router.post('/anadir_raspberry', function(req, res, next){
+
+
+    var DNI = req.body.DNI;
+    var bDNI= checkDNI(DNI);
+    var RaspID = req.body.RaspID;
+    var bRaspID = checkRaspID(RaspID);
+    console.log(RaspID);
+
+    var ball = "Datos incorrectos";
+    if( bDNI === "ok") {
+        if (bRaspID === "ok") {
+            ball = "ok";
+        }
+    }
+
+    var json = {'estado':ball,'DNI': bDNI,'RaspID': bRaspID};
+
+    var sql = 'INSERT INTO Rasps (RaspID,ClientID) VALUES ( "'+RaspID+'",(SELECT ID FROM ClientData WHERE DNI="'+DNI+'") )';
+    if(ball==="ok") {
+        connection.query(sql, function (err, result) {
+            console.log(sql);
+            if (err) throw err;
+
+        });
+    }
+
+
+    //var obj = JSON.parse(json);
+
+    res.send(json);
 });
 // router.get('/DNI', function(req, res, next) {
 //     if(req.session.logueado === 0) {
@@ -90,3 +123,13 @@ router.post('/eliminar', function(req, res, next){
     res.end();
 
 });
+
+function checkDNI(str){
+    if(typeof str != 'string') return "Datos incorrectos";
+    return "ok";
+}
+
+function checkRaspID(str){
+    if(typeof str != 'string' || str ==="") return "Datos incorrectos";
+    return "ok";
+}
