@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
 
 
     connection.query(sql, function(err, rows, fields) {
-        if (err) throw console.log("Error SQL");
+        if (err)  console.log(err);
         res.render('client', { title: 'Clientes', menu: 'clientes', rows: rows });
     });
 });
@@ -93,7 +93,7 @@ router.post('/baja_cliente', function (req, res, next) {
 
     connection.query(sql, elim, function (err, result) {
         console.log(sql);
-        if (err) throw console.log("Error SQL");
+        if (err) throw console.log(err);
 
     });
     res.send({'estado':'ok'});
@@ -106,7 +106,7 @@ router.post('/buscar_cliente', function (req,res,next) {
 
 
     connection.query(sql, id, function (err, result) {
-        if (err) throw err;
+        if (err) console.log(err);
         var fecha = swapDataFront(result[0].FechaNacimiento);
         var json = {'ID':result[0].ID,'DNI': result[0].DNI,'nombre': result[0].Nombre,'apellido':result[0].Apellido,'telefono':result[0].Telefono,'email':result[0].EMAIL,'data':fecha};
         res.send(json);
@@ -244,3 +244,4 @@ function isValidData(str){
     console.log(m[3] +'-'+ m[2]+'-'+m[1]);
     return ret;
 }
+module.exports = router;
