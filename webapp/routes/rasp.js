@@ -18,10 +18,10 @@ router.get('/', function(req, res, next) {
 
 
     connection.query(sql, function(err, rows, fields) {
-        if (err) throw err;
+        if (err) console.log(err);
         var sql2 = 'SELECT DNI from ClientData';
         connection.query(sql2, function(err, DNIS, fields) {
-            if (err) throw err;
+            if (err) console.log(err);
             res.render('rasp', { title: 'Raspberrys', menu: "raspberry", rows: rows, DNIS:DNIS});
         });
     });
@@ -46,7 +46,7 @@ router.post('/anadir_raspberry', function(req, res, next){
     connection.query(sql_check, function (err, check ,result) {
         console.log(sql_check);
 
-        if (err) throw err;
+        if (err) console.log(err);
         if (check.length!=0) {
             ball="Datos incorrectos";
             bRaspID="RaspID no se puede repetir";
@@ -57,7 +57,7 @@ router.post('/anadir_raspberry', function(req, res, next){
         if(json.estado==="ok") {
             connection.query(sql, function (err, result) {
                 console.log(sql);
-                if (err) throw err;
+                if (err) console.log(err);
             });
         }
         res.send(json);
@@ -78,7 +78,7 @@ router.post('/anadir_raspberry', function(req, res, next){
 //
 //
 //     connection.query(sql, function(err, DNIS, fields) {
-//         if (err) throw err;
+//         if (err) console.log(err);
 //         res.render('rasp', { title: 'Raspberrys', menu: "raspberry", DNIS:DNIS });
 //
 //     });
@@ -92,7 +92,7 @@ router.post('/desasociar', function(req, res, next){
     var sql = 'UPDATE Rasps SET ClientID = NULL WHERE RaspID ="'+RaspID+'"';
     connection.query(sql, function (err, result) {
         console.log(sql);
-        if (err) throw err;
+        if (err) console.log(err);
 
     });
     res.end();
@@ -106,7 +106,7 @@ router.post('/asociar', function(req, res, next){
     var sql = 'UPDATE Rasps SET ClientID = (SELECT ID FROM ClientData WHERE DNI ="'+DNI+'") WHERE RaspID="'+RaspID+'"';
     connection.query(sql, function (err, result) {
         console.log(sql);
-        if (err) throw err;
+        if (err) console.log(err);
 
     });
     res.end();
@@ -118,13 +118,13 @@ router.post('/eliminar', function(req, res, next){
     var sql = 'DELETE FROM CarData WHERE ID_rasp ="'+RaspID+'"';
     connection.query(sql, function (err, result) {
         console.log(sql);
-        if (err) throw err;
+        if (err) console.log(err);
 
     });
     var sql = 'DELETE FROM Rasps WHERE RaspID ="'+RaspID+'"';
     connection.query(sql, function (err, result) {
         console.log(sql);
-        if (err) throw err;
+        if (err) console.log(err);
 
     });
 
