@@ -8,19 +8,21 @@ var mysql = require('mysql'),
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-    if(req.session.logueado === 0) {
+    if(req.session.logueado){
+        var sql = 'SELECT * from ClientData';
+
+
+        connection.query(sql, function(err, rows, fields) {
+            if (err)  console.log(err);
+            res.render('client', { title: 'Clientes', menu: 'clientes', rows: rows });
+        });
+    }else{
         res.writeHead(301,
-            {Location: './'}
+            {Location: '../login'}
         );
-        setTimeout(res.end(), 3000);
+        res.end();
     }
-    var sql = 'SELECT * from ClientData';
 
-
-    connection.query(sql, function(err, rows, fields) {
-        if (err)  console.log(err);
-        res.render('client', { title: 'Clientes', menu: 'clientes', rows: rows });
-    });
 });
 
 
