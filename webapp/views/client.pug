@@ -95,11 +95,17 @@ block content
     script.
         function abrir(){
             $('#DNI').val("");
+            $('#error_dni').css("display", "none");
             $('#nombre').val("");
+            $('#error_nombre').css("display", "none");
             $('#apellido').val("");
+            $('#error_apellido').css("display", "none");
             $('#telefono').val("");
+            $('#error_telefono').css("display", "none");
             $('#email').val("");
+            $('#error_email').css("display", "none");
             $('#fechaNacimiento').val("");
+            $('#error_fechaNacimiento').css("display", "none");
             $('#botonAnadir').css("btn-primary", "btn-success");
             $('#botonAnadir').html("Añadir");
             $('#myModal').modal('show');

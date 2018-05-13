@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
 
 
     connection.query(sql, function(err, rows, fields) {
-        if (err) throw console.log("Error SQL");
+        if (err)  console.log(err);
         res.render('client', { title: 'Clientes', menu: 'clientes', rows: rows });
     });
 });
@@ -48,38 +48,49 @@ router.post('/alta_cliente', function(req, res, next){
     var fechaNacimineto = swapData(req.body.fechaNacimiento);
     var bdata = isValidData(fechaNacimineto);
 
-    var ball = "Datos incorrectos";
-    if( bdni === "ok") {
-        if (bnom === "ok") {
-            if (bape === "ok") {
-                if (btel === "ok") {
-                    if (bemail === "ok") {
-                        if (bdata === "ok") {
-                            ball = "ok";
+    var sql_check ='SELECT DNI FROM ClientData WHERE DNI = "' + dni + '"';
+    console.log(sql_check);
+    connection.query(sql_check, function (err, result) {
+        console.log(sql_check);
+
+        if (err) console.log(err);
+        if (result.length!=0) {
+            var ball="Datos incorrectos";
+            bdni="DNI existente";
+        }
+
+
+        if( bdni === "ok") {
+            if (bnom === "ok") {
+                if (bape === "ok") {
+                    if (btel === "ok") {
+                        if (bemail === "ok") {
+                            if (bdata === "ok") {
+                                ball = "ok";
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
+        var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
 
 
-    var values = "'" + dni + "','" + nombre + "','" + apellido + "','" + telefono + "','" + email + "','" + fechaNacimineto +"'";
-    var sql = 'INSERT INTO ClientData (DNI, Nombre, Apellido, Telefono, EMAIL, FechaNacimiento) VALUES ('+values+')';
-    if(ball==="ok") {
+        var values = "'" + dni + "','" + nombre + "','" + apellido + "','" + telefono + "','" + email + "','" + fechaNacimineto +"'";
+        var sql = 'INSERT INTO ClientData (DNI, Nombre, Apellido, Telefono, EMAIL, FechaNacimiento) VALUES ('+values+')';
+        if(ball==="ok") {
 
-        connection.query(sql, values, function (err, result) {
-            if (err) throw console.log("Error SQL");
+            connection.query(sql, values, function (err, result) {
+                if (err)  console.log("Error SQL");
 
-        });
-    }
+            });
+        }
 
-    //var obj = JSON.parse(json);
-
-    res.send(json);
+        res.send(json);
+    });
 });
+
 
 
 
@@ -93,7 +104,7 @@ router.post('/baja_cliente', function (req, res, next) {
 
     connection.query(sql, elim, function (err, result) {
         console.log(sql);
-        if (err) throw console.log("Error SQL");
+        if (err) throw console.log(err);
 
     });
     res.send({'estado':'ok'});
@@ -106,7 +117,7 @@ router.post('/buscar_cliente', function (req,res,next) {
 
 
     connection.query(sql, id, function (err, result) {
-        if (err) throw err;
+        if (err) console.log(err);
         var fecha = swapDataFront(result[0].FechaNacimiento);
         var json = {'ID':result[0].ID,'DNI': result[0].DNI,'nombre': result[0].Nombre,'apellido':result[0].Apellido,'telefono':result[0].Telefono,'email':result[0].EMAIL,'data':fecha};
         res.send(json);
@@ -134,39 +145,52 @@ router.post('/editar_cliente', function(req, res, next){
     var fechaNacimineto = swapData(req.body.fechaNacimiento);
     var bdata = isValidData(fechaNacimineto);
 
-    var ball = "Datos incorrectos";
-    if( bdni === "ok") {
-        if (bnom === "ok") {
-            if (bape === "ok") {
-                if (btel === "ok") {
-                    if (bemail === "ok") {
-                        if (bdata === "ok") {
-                            ball = "ok";
+    var sql_check ='SELECT DNI FROM ClientData WHERE DNI = "' + dni + '"';
+    console.log(sql_check);
+    connection.query(sql_check, function (err, result) {
+        console.log(sql_check);
+
+        if (err) console.log(err);
+        if (result.length!=0) {
+            var ball="Datos incorrectos";
+            bdni="DNI existente";
+        }
+
+
+        if( bdni === "ok") {
+            if (bnom === "ok") {
+                if (bape === "ok") {
+                    if (btel === "ok") {
+                        if (bemail === "ok") {
+                            if (bdata === "ok") {
+                                ball = "ok";
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
-
+        var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
 
 
-    var sql = "UPDATE ClientData SET DNI = '"+dni+"', Nombre = '"+nombre+"', Apellido = '"+apellido+"', Telefono = '"+telefono+"', EMAIL = '"+email+"', FechaNacimiento ='"+fechaNacimineto+"' WHERE ID = "+req.body.id;
-    if(ball==="ok") {
 
-        connection.query(sql, function (err, result) {
-            console.log(sql);
-            if (err) throw err;
+        var sql = "UPDATE ClientData SET DNI = '"+dni+"', Nombre = '"+nombre+"', Apellido = '"+apellido+"', Telefono = '"+telefono+"', EMAIL = '"+email+"', FechaNacimiento ='"+fechaNacimineto+"' WHERE ID = "+req.body.id;
+        if(ball==="ok") {
 
-        });
-    }
+            connection.query(sql, function (err, result) {
+                console.log(sql);
+                if (err) console.log(err);
 
-    //var obj = JSON.parse(json);
+            });
+        }
 
-    res.send(json);
+        //var obj = JSON.parse(json);
+
+        res.send(json);
+    });
 });
+
 
 
 
@@ -244,3 +268,4 @@ function isValidData(str){
     console.log(m[3] +'-'+ m[2]+'-'+m[1]);
     return ret;
 }
+module.exports = router;
