@@ -1,46 +1,198 @@
-extends layout
+extends ./navbar
 
 block content
-    html
-        head
-            title= "Clientes"
-            link(href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css', rel='stylesheet')
-        body
-            nav.navbar.navbar-inverse.navbar-fixed-top
-                div.container_fluid
-                    div.navbar-header
-                        button.navbar-toggle.collapsed(type = "button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false")
-                            span.sr-only Toggle navigation
-                            span.icon-bar
-                            span.icon-bar
-                            span.icon-bar
-                        a.navbar-brand(href='#') CarLocator
-                    div.collapse.navbar-collapse
-                        ul.nav.navbar-nav
-                            li
-                                a(href='./') Principal
+    .main.container
+        .row
+            div.col-md-11
+                h1 Raspberrys
+            div.col-md-1
+                br
+                button.btn.btn-success(type="button", onclick="validar_añadir();") Añadir
+        .row
+            br
+            table.table.table-bordered.table-responsive.table-hover
+                thead
+                    .active
+                        tr
+                            th RaspberryID
+                            th DNI
+                            th(style="width:1%;text-align:center;") Opciones
+                            th(style="width:1%;text-align:center;") Datos
+                            th(style="width:1%;text-align:center;") Eliminar
+                tbody
+                    each item in rows
+                        tr
+                            td= item.RaspID
+                            td= item.DNI
+                            td(style="text-align:center;")
+                                if item.DNI == null
+                                    button.btn.btn-primary.btn-xs(onclick="validar_asociar('"+item.RaspID+"');")
+                                        span.glyphicon.glyphicon-tag(aria-hidden= 'true')
+                                else
+                                    button.btn.btn-warning.btn-xs(onclick="validar_desasociar('"+item.RaspID+"');")
+                                        span.glyphicon.glyphicon-fire(aria-hidden= 'true')
+                            td(style="text-align:center;")
+                                button.btn.btn-success.btn-xs
+                                    span.glyphicon.glyphicon-zoom-in(aria-hidden= 'true')
+                            td(style="text-align:center;")
+                                button.btn.btn-danger.btn-xs(onclick="validar_eliminar('"+item.RaspID+"');")
+                                    span.glyphicon.glyphicon-remove(aria-hidden= 'true')
 
-                            li
-                                a(href='./rasp') Raspberry
-                            li.active
-                                a(href='./client') Clientes
-                                    span.sr-only Actual
-                        ul.nav.navbar-nav.navbar-right
-                            li
-                                a(href='./login/logout') Cerrar sesión
-                                    span.glyphicon.glyphicon-log-out(aria-hidden= 'true')
+    div.modal.fade(id="eliminar" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Eliminar cliente
+                .modal-body
+                    b ¿Está seguro que quiere Eliminar el cliente de esta Raspberry?
+                    p Esta acción no se podrá deshacer.
+                .modal-footer
+                    button.btn.btn-danger(type="button" id="modalEliminar" onclick="") Eliminar
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
 
-            .main.container
-                .row
-                        table.table.table-bordered.table-responsive.table-hover
-                            thead
-                                .active
-                                    tr
-                                        th RaspberryID
-                                        th DNI
-                            tbody
-                                each item in rows
-                                    tr
-                                        td= item.RaspID
-                                        td= item.DNI
+    div.modal.fade(id="desasociar" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Desasociar cliente
+                .modal-body
+                    b ¿Está seguro que quiere desasociar el cliente de esta Raspberry?
+                    p Esta acción no se podrá deshacer.
+                .modal-footer
+                    button.btn.btn-danger(type="button" id="modalDesasociar" onclick="") Desasociar
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
+
+    div.modal.fade(id="asociar" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Asociar cliente
+                .modal-body
+                    form(method="post" id="formasociar" action="../client/asociar_cliente")
+                        .row(style="text-align:center;")
+                                label(for="DNI_asociar") DNI
+                                select.form-control(name="DNI_asociar", id="DNI_asociar", required="required", style="width:50%;margin-left:25%;")
+                                    option
+                                        each item in DNIS
+                                             option=item.DNI
+                                div.alert.alert-danger(style="display:none" id="error_dni_asociar")
+
+                .modal-footer
+                    button.btn.btn-primary(type="button" id="modalAsociar" onclick="") Asociar
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
+
+    div.modal.fade(id="añadir" role="dialog")
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal") &times
+                    h4 Añadir Raspberry.
+                .modal-body
+                    form(method="post" id="formraspberry" action="../client/anadir_raspberry")
+                        .row
+                            div.form-group.col-md-6
+                                label(for="RaspberryID") Raspberry ID
+                                input.form-control(name="RaspberryID", id="RaspberryID", required="required")
+                                div.alert.alert-danger(style="display:none" id="error_raspberryID")
+                            div.form-group.col-md-6
+                                label(for="DNI_añadir") DNI Cliente
+                                select.form-control(name="DNI_añadir", id="DNI_añadir")
+                                    option
+                                        each item in DNIS
+                                            option=item.DNI
+                                div.alert.alert-danger(style="display:none" id="error_DNICliente")
+
+                .modal-footer
+                    button.btn.btn-success(type="button" id="modalAñadir" onclick="anadir_raspberry()") Añadir
+                    button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
+
+    script.
+        function validar_desasociar(RaspID) {
+            $("#modalDesasociar").attr("onclick","desasociar('"+RaspID+"')");
+            $('#desasociar').modal('show');
+        }
+        function validar_asociar(RaspID) {
+            $('#DNI_asociar').val('default');
+            $("#modalAsociar").attr("onclick", "asociar('" + RaspID + "')");
+            $('#asociar').modal('show');
+        }
+        function validar_eliminar(RaspID) {
+            $("#modalEliminar").attr("onclick", "eliminar('" + RaspID + "')");
+            $('#eliminar').modal('show');
+        }
+        function desasociar(RaspID) {
+            $.post('../rasp/desasociar', {
+                RaspID: RaspID
+            }, function (data) {
+                $('#desasociar').modal('hide');
+                location.reload();
+            });
+        }
+        function eliminar(RaspID) {
+            $.post('../rasp/eliminar', {
+                RaspID: RaspID
+            }, function (data) {
+                $('#eliminar').modal('hide');
+                location.reload();
+            });
+        }
+        function asociar(RaspID){
+            valid = true;
+            DNISelected = $('#DNI_asociar').val();
+            if (DNISelected === "") {
+                valid = false;
+                $('#error_dni_asociar').html("DNI no puede estar vacio.");
+                $('#error_dni_asociar').css("display", "");
+            }
+            if (valid ) {
+                $.post('../rasp/asociar', {
+                    RaspID: RaspID,
+                    DNI: DNISelected
+                }, function (data) {
+                    $('#asociar').modal('hide');
+                    location.reload();
+                });
+            }
+        }
+        function validar_añadir(){
+            $('#RaspberryID').val('');
+            $('#DNI_añadir').val('default');
+            $('#error_raspberryID').css("display","none");
+            $('#añadir').modal('show');
+        }
+        function anadir_raspberry() {
+            var valido = true;
+            var RaspID = $('#RaspberryID').val();
+            var DNI = $('#DNI_añadir').val();
+
+            if (RaspID === "") {
+                valido = false;
+                $('#error_raspberryID').html("Raspberry ID no puede estar vacio.");
+                $('#error_raspberryID').css("display", "");
+            }
+
+            if (valido) {
+                $.post('../rasp/anadir_raspberry', {
+                        DNI: DNI,
+                        RaspID: RaspID
+                    },
+                    function (data) {
+                        console.log(data);
+                        if (data.estado === "ok") {
+                            $('#añadir').modal('show');
+                            location.reload();
+                        }
+                        else {
+                            if (data.RaspID !== "ok") {
+                                $('#error_raspberryID').html(data.RaspID);
+                                $('#error_raspberryID').css("display", "");
+                            }
+                        }
+                    });
+            }
+        }
+
 
