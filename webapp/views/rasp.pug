@@ -115,6 +115,7 @@ block content
             $('#desasociar').modal('show');
         }
         function validar_asociar(RaspID) {
+            $('#DNI_asociar').val('default');
             $("#modalAsociar").attr("onclick", "asociar('" + RaspID + "')");
             $('#asociar').modal('show');
         }
@@ -141,7 +142,6 @@ block content
         function asociar(RaspID){
             valid = true;
             DNISelected = $('#DNI_asociar').val();
-            $('#DNI_asociar').val('default');
             if (DNISelected === "") {
                 valid = false;
                 $('#error_dni_asociar').html("DNI no puede estar vacio.");
@@ -158,37 +158,41 @@ block content
             }
         }
         function validar_añadir(){
+            $('#RaspberryID').val('');
+            $('#DNI_añadir').val('default');
+            $('#error_raspberryID').css("display","none");
             $('#añadir').modal('show');
         }
         function anadir_raspberry() {
             var valido = true;
             var RaspID = $('#RaspberryID').val();
-            $('#RaspberryID').val('');
             var DNI = $('#DNI_añadir').val();
-            $('#DNI_añadir').val('default');
 
             if (RaspID === "") {
                 valido = false;
                 $('#error_raspberryID').html("Raspberry ID no puede estar vacio.");
                 $('#error_raspberryID').css("display", "");
             }
+
             if (valido) {
                 $.post('../rasp/anadir_raspberry', {
                         DNI: DNI,
                         RaspID: RaspID
                     },
                     function (data) {
+                        console.log(data);
                         if (data.estado === "ok") {
                             $('#añadir').modal('show');
                             location.reload();
                         }
                         else {
                             if (data.RaspID !== "ok") {
-                                $('#error_RaspberryID').html(data.RaspID);
-                                $('#error_RaspberryID').css("display", "");
+                                $('#error_raspberryID').html(data.RaspID);
+                                $('#error_raspberryID').css("display", "");
                             }
                         }
                     });
             }
         }
+
 

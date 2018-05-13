@@ -34,7 +34,6 @@ router.post('/anadir_raspberry', function(req, res, next){
     var bDNI= checkDNI(DNI);
     var RaspID = req.body.RaspID;
     var bRaspID = checkRaspID(RaspID);
-    console.log(RaspID);
 
     var ball = "Datos incorrectos";
     if( bDNI === "ok") {
@@ -43,21 +42,30 @@ router.post('/anadir_raspberry', function(req, res, next){
         }
     }
 
-    var json = {'estado':ball,'DNI': bDNI,'RaspID': bRaspID};
+    var sql_check = 'SELECT RaspID FROM Rasps WHERE RaspID="'+RaspID+'"';
+    connection.query(sql_check, function (err, check ,result) {
+        console.log(sql_check);
 
-    var sql = 'INSERT INTO Rasps (RaspID,ClientID) VALUES ( "'+RaspID+'",(SELECT ID FROM ClientData WHERE DNI="'+DNI+'") )';
-    if(ball==="ok") {
-        connection.query(sql, function (err, result) {
-            console.log(sql);
-            if (err) throw err;
+        if (err) throw err;
+        if (check.length!=0) {
+            ball="Datos incorrectos";
+            bRaspID="RaspID no se puede repetir";
+        }
+        var json = {'estado':ball,'DNI': bDNI,'RaspID': bRaspID};
+        console.log(json);
+        var sql = 'INSERT INTO Rasps (RaspID,ClientID) VALUES ( "'+RaspID+'",(SELECT ID FROM ClientData WHERE DNI="'+DNI+'") )';
+        if(json.estado==="ok") {
+            connection.query(sql, function (err, result) {
+                console.log(sql);
+                if (err) throw err;
+            });
+        }
+        res.send(json);
 
-        });
-    }
-
+    });
 
     //var obj = JSON.parse(json);
 
-    res.send(json);
 });
 // router.get('/DNI', function(req, res, next) {
 //     if(req.session.logueado === 0) {
@@ -130,6 +138,6 @@ function checkDNI(str){
 }
 
 function checkRaspID(str){
-    if(typeof str != 'string' || str ==="") return "Datos incorrectos";
+    if(typeof str != 'string' || str ==="") return "RaspID no puede estar vacia";
     return "ok";
 }
