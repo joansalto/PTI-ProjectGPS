@@ -147,7 +147,7 @@ router.post('/editar_cliente', function(req, res, next){
     var fechaNacimineto = swapData(req.body.fechaNacimiento);
     var bdata = isValidData(fechaNacimineto);
 
-    var sql_check ='SELECT DNI FROM ClientData WHERE DNI = "' + dni + '"';
+    var sql_check ='SELECT DNI FROM ClientData WHERE DNI = "' + dni + '" and ID !='+ req.body.id;
     console.log(sql_check);
     connection.query(sql_check, function (err, result) {
         console.log(sql_check);

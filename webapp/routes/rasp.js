@@ -86,7 +86,7 @@ router.post('/anadir_raspberry', function(req, res, next){
 //     });
 // });
 
-module.exports = router;
+
 
 router.post('/desasociar', function(req, res, next){
     var RaspID = req.body.RaspID;
@@ -143,3 +143,4 @@ function checkRaspID(str){
     if(typeof str != 'string' || str ==="") return "RaspID no puede estar vacia";
     return "ok";
 }
+module.exports = router;
