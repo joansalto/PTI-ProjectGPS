@@ -5,14 +5,13 @@ from obd import OBDStatus
 from time import time
 
 ########################VARIABLES GLOBALES#########################
-url = "http://54.149.160.242/items"								  #
-tiempo = 0														  # 
+url = "http://54.149.160.242/ApiRest"						  	  #
+tiempo = 0									                      # 
 speed = obd.commands.SPEED # select an OBD command (sensor)       #
-rpm = obd.commands.RPM											  #
-fuel_lvl = obd.commands.FUEL_LEVEL								  #
-run_time = obd.commands.RUN_TIME								  #
-distance = obd.commands.DISTANCE_W_MIL							  #
-id = 0
+rpm = obd.commands.RPM								              #
+fuel_lvl = obd.commands.FUEL_LEVEL						          #
+run_time = obd.commands.RUN_TIME						          #
+distance = obd.commands.DISTANCE_W_MIL						      #
 ###################################################################
 
 def init_config():
@@ -25,9 +24,9 @@ def writelog(mensaje):
 	f.write("["+str(NOW)[0:19] + "] "+mensaje+"\n")
 	f.close()	
 
-def write_csv(ahora, data_speed, data_rpm, data_lvl, data_time, data_distance):
+def write_csv(idrasp,ahora, data_speed, data_rpm, data_lvl, data_time, data_distance,x,y):
 	myFile = open('datosODB.csv', 'a')
-	datos = [[str(ahora)[0:19],data_speed,data_rpm, data_lvl, data_time, data_distance]]
+	datos = [[str(idrasp),str(ahora)[0:19],str(data_speed)[0:-4],str(data_rpm)[0:-23],str(data_lvl)[0:-8], str(data_time)[0:-7],str(data_distance)[0:-10],str(x),str(y)]]
 	with myFile:
 		writer = csv.writer(myFile)
 		writer.writerows(datos)
@@ -35,9 +34,11 @@ def write_csv(ahora, data_speed, data_rpm, data_lvl, data_time, data_distance):
 		writelog("Datos en local guardados correctamente.")
 
 
-def send(ahora, data_speed, data_rpm, data_lvl, data_time, data_distance):
-	json_data = {"data": str(ahora)[0:19], "speed": data_speed,"rpm":data_rpm, "lvl":data_lvl, "time":data_time, "distance": data_distance}	
+def send(idrasp,ahora, data_speed, data_rpm, data_lvl, data_time, data_distance,x,y):
+	json_data = {"idrasp": idrasp,"data": str(ahora)[0:19], "speed": str(data_speed)[0:-4],"rpm":str(data_rpm)[0:-23], "lvl":str(data_lvl)[0:-8], "time":str(data_time)[0:-7], "distance": str(data_distance)[0:-10],"x":x,"y":x}
 	headers = {'Content-type': 'application/json'}
+	print json_data
+	url = "http://54.149.160.242/items"
 	try:
 		r = requests.post(url, data=json.dumps(json_data), headers=headers)
 		return 0
@@ -52,7 +53,7 @@ def read_and_send():
 			reader = csv.reader(File, delimiter=',', quotechar=',',quoting=csv.QUOTE_MINIMAL)
 			result = -1
 			for row in reader:
-				result = send(row[0],row[1],row[2],row[3],row[4],row[5]) #enviamos los datos de la fila
+				result = send(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8]) #enviamos los datos de la fila
 				if result == -1:
 					File.close()
 					break
@@ -86,7 +87,7 @@ def comprobar_conexion():
 def imprimir_dato(cmd):
 	response = connection.query(cmd) # send the command, and parse the response
 	#print (response.value) # returns unit-bearing values thanks to Pint
-	return response.value.to("")
+	return response.value
 
 
 #######################################MAIN#######################################3
@@ -94,6 +95,7 @@ init_config()
 connection = obd.OBD() # auto-connects to USB or RF port
 estado = comprobar_conexion()
 start_time = time()
+raspid = 0;
 while (estado == 1):
 	end_time = time()
 	tiempo = end_time - start_time;
@@ -112,7 +114,9 @@ while (estado == 1):
 		data_lvl = imprimir_dato(fuel_lvl)
 		data_time = imprimir_dato(run_time)
 		data_distance = imprimir_dato(distance)
-		send_data(ahora,data_speed, data_rpm, data_lvl, data_time, data_distance)
+		x = "test"
+		y = "test"
+		send_data(raspid,ahora,data_speed, data_rpm, data_lvl, data_time, data_distance,x,y)
 		tiempo = 0
 		start_time = time()
 			
