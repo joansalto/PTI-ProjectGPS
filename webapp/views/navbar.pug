@@ -44,6 +44,14 @@ html(lang='es')
                         else
                             li
                                 a(href='../client/') Clientes
+                        if menu === "controlPanel"
+                            li.active
+                                a(href='../about/') About
+                                    span.sr-only Actual
+                        else
+                            li
+                                a(href='../about/') About
+
                     ul.nav.navbar-nav.navbar-right
                         li
                             a(href='../login/logout/') Cerrar sesión
