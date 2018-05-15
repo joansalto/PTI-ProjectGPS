@@ -14,6 +14,18 @@ run_time = obd.commands.RUN_TIME						          #
 distance = obd.commands.DISTANCE_W_MIL						      #
 ###################################################################
 
+def get_lat():
+        f = open("/home/pi/CarLocator/PTI-ProjectGPS/OBD/lat.txt","r")
+        lat = f.read()
+        f.close()
+        return str(lat)[0:-1]
+
+def get_lon():
+        f = open("/home/pi/CarLocator/PTI-ProjectGPS/OBD/lon.txt","r")
+        lon = f.read()
+        f.close()
+        return str(lon)[0:-1]
+
 def init_config():
 	obd.logger.removeHandler(obd.console_handler)
 	sys.tracebacklimit = 0 #Te quita el traceback de los errores.Comentar para errores
@@ -114,8 +126,8 @@ while (estado == 1):
 		data_lvl = imprimir_dato(fuel_lvl)
 		data_time = imprimir_dato(run_time)
 		data_distance = imprimir_dato(distance)
-		x = "test"
-		y = "test"
+		x = get_lat()
+		y = get_lon()
 		send_data(raspid,ahora,data_speed, data_rpm, data_lvl, data_time, data_distance,x,y)
 		tiempo = 0
 		start_time = time()
