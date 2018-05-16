@@ -17,10 +17,7 @@ router.get('/', function(req, res, next) {
             res.render('client', { title: 'Clientes', menu: 'clientes', rows: rows });
         });
     }else{
-        res.writeHead(301,
-            {Location: '../login'}
-        );
-        res.end();
+        res.redirect("/rasp");
     }
 
 });

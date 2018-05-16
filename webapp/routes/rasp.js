@@ -8,7 +8,7 @@ var mysql = require('mysql'),
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-    if(req.session.logueado){
+    if(/*req.session.logueado*/true){
         var sql = 'SELECT RaspID,DNI from Rasps left join ClientData on ClientID=ID ORDER BY RaspID';
 
 
@@ -21,10 +21,7 @@ router.get('/', function(req, res, next) {
             });
         });
     }else{
-        res.writeHead(301,
-            {Location: '../login'}
-        );
-        res.end();
+        res.redirect("/login");
     }
 
 });

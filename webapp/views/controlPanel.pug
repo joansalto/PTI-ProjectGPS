@@ -1,0 +1,131 @@
+extends ./navbar
+
+
+block content
+    .main.container
+        form(method="post" id="formActu" action="../controlPanel")
+            input(value= DNI style="display:none" name="DNI")
+        .row
+            .col-md-9
+                h1 Panel de Control de #{infoCliente[0].Nombre} #{infoCliente[0].Apellido}
+                hr
+                br
+            .col-md-3
+                br
+                button.btn.btn-success(onclick="Actualizar()", id="Actu") Actualizar página
+        .row
+            .col-md-6
+                label Velocidad
+                canvas(id="speedGraph" width="500" height="300")
+            .col-md-6
+                label Revoluciones por minuto
+                canvas(id="rpmGraph" width="500" height="300")
+        br
+        .row
+            .col-md-6
+                label Nivel de gasolina
+                canvas(id="fuelLvl" width="500" height="300")
+
+
+    script.
+        $(function () {
+            SpeedGraph();
+            RPMGraph();
+            FuelGraph();
+        });
+        function Actualizar() {
+            $("#formActu").submit();
+        }
+        function FuelGraph() {
+            var popCanvas = $("#fuelLvl");
+            var FUEL = {
+                label: "Porcentaje",
+                data: [#{fuel}],
+                backgroundColor: 'transparent',
+                borderColor: 'blue'
+            }
+            var Datos = {
+                labels: [#{fechas}],
+                datasets: [FUEL]
+            }
+            var chartOptions = {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        boxWidth: 80,
+                        fontColor: 'black'
+                    }
+                }
+            };
+            var barChart = new Chart(popCanvas, {
+                type: 'line',
+                data: Datos,
+                options: chartOptions
+
+            });
+
+        }
+        function RPMGraph() {
+            var popCanvas = $("#rpmGraph");
+            var RPM = {
+                label: "RPM",
+                data: [#{rpm}],
+                backgroundColor: 'transparent',
+                borderColor: 'red'
+            }
+            var Datos = {
+                labels: [#{fechas}],
+                datasets: [RPM]
+            }
+            var chartOptions = {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        boxWidth: 80,
+                        fontColor: 'black'
+                    }
+                }
+            };
+            var barChart = new Chart(popCanvas, {
+                type: 'line',
+                data: Datos,
+                options: chartOptions
+
+            });
+
+        }
+        function SpeedGraph(){
+
+            var popCanvas = $("#speedGraph");
+
+            var Speed = {
+                label: "KmH",
+                data: [#{velocidades}],
+                backgroundColor: 'transparent',
+                borderColor: 'orange'
+
+            }
+
+            var Datos = {
+                labels: [#{fechas}],
+                datasets: [Speed]
+            }
+            var chartOptions = {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        boxWidth: 80,
+                        fontColor: 'black'
+                    }
+                }
+            };
+            var barChart = new Chart(popCanvas, {
+                type: 'line',
+                data:Datos,
+                options:chartOptions
+
+            });
+        }
