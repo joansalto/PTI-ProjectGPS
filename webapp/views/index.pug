@@ -1,10 +1,42 @@
-extends navbar
+extends ./navbar
 
 block content
-
-
-
-
+    .main.container
+        .row
+            div.col-md-5
+                h1 Bienvenido a CarLocator
+                br
+                br
+        .row
+            .col-md-4
+            div.col-md-4
+                img(src="../public/Img/logo.png" alt="logo_CarLocator" style="width:100%;")
+                br
+        br
+        br
+        br
+        .row
+            .col-md-3
+            div.col-md-3
+                d1
+                    dt Número de Raspberrys totales:
+                    dd  #{rasps}
+                    br
+                    dt Distancia total recorrida:
+                    dd  #{dist}
+                    br
+                    dt Media de RPM:
+                    dd  #{rpm}
+            div.col-md-3
+                d1
+                    dt Tiempo total conducido:
+                    dd  #{time}
+                    br
+                    dt Número de raspberrys asociadas:
+                    dd  #{activos}
+                    br
+                    dt Número de clientes:
+                    dd  #{clients}
 
 
 
