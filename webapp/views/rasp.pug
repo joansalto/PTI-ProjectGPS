@@ -23,6 +23,8 @@ block content
                     each item in rows
                         tr
                             td= item.RaspID
+                                form(method="post" id="form_"+item.DNI action="../controlPanel")
+                                    input(value=item.DNI style="display:none" name="DNI")
                             td= item.DNI
                             td(style="text-align:center;")
                                 if item.DNI == null
@@ -32,7 +34,7 @@ block content
                                     button.btn.btn-warning.btn-xs(onclick="validar_desasociar('"+item.RaspID+"');")
                                         span.glyphicon.glyphicon-fire(aria-hidden= 'true')
                             td(style="text-align:center;")
-                                button.btn.btn-success.btn-xs
+                                button.btn.btn-success.btn-xs(onclick="verPanelControl('form_"+item.DNI+"')")
                                     span.glyphicon.glyphicon-zoom-in(aria-hidden= 'true')
                             td(style="text-align:center;")
                                 button.btn.btn-danger.btn-xs(onclick="validar_eliminar('"+item.RaspID+"');")
@@ -110,6 +112,12 @@ block content
                     button.btn.btn-default(type="button" data-toggle="modal" data-dismiss="modal") Cancelar
 
     script.
+        function verPanelControl(idForm) {
+
+            var  destino=  '#'+idForm;
+            $(destino).submit();
+
+        }
         function validar_desasociar(RaspID) {
             $("#modalDesasociar").attr("onclick","desasociar('"+RaspID+"')");
             $('#desasociar').modal('show');

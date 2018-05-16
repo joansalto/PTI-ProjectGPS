@@ -21,10 +21,7 @@ router.get('/', function(req, res, next) {
             });
         });
     }else{
-        res.writeHead(301,
-            {Location: '../login'}
-        );
-        res.end();
+        res.redirect("/login");
     }
 
 });
