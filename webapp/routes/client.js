@@ -45,6 +45,8 @@ router.post('/alta_cliente', function(req, res, next){
     var btel = checkTelefono(telefono);
     var email = req.body.email;
     var bemail = checkEmail(email);
+    var MaxKm = req.body.MaxKm;
+    var bMaxKm = checkMaxKm(MaxKm);
 
     //DD-MM-YYYY -> YYYY-DD-MM
     var fechaNacimineto = swapData(req.body.fechaNacimiento);
@@ -68,7 +70,9 @@ router.post('/alta_cliente', function(req, res, next){
                     if (btel === "ok") {
                         if (bemail === "ok") {
                             if (bdata === "ok") {
-                                ball = "ok";
+                                if(bMaxKm == "ok") {
+                                    ball = "ok";
+                                }
                             }
                         }
                     }
@@ -76,11 +80,11 @@ router.post('/alta_cliente', function(req, res, next){
             }
         }
 
-        var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
+        var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata,'MaxKm':bdni};
 
 
-        var values = "'" + dni + "','" + nombre + "','" + apellido + "','" + telefono + "','" + email + "','" + fechaNacimineto +"'";
-        var sql = 'INSERT INTO ClientData (DNI, Nombre, Apellido, Telefono, EMAIL, FechaNacimiento) VALUES ('+values+')';
+        var values = "'" + dni + "','" + nombre + "','" + apellido + "','" + telefono + "','" + email + "','" + fechaNacimineto +"','" + MaxKm + "'";
+        var sql = 'INSERT INTO ClientData (DNI, Nombre, Apellido, Telefono, EMAIL, FechaNacimiento, MaxKm) VALUES ('+values+')';
         if(ball==="ok") {
 
             connection.query(sql, values, function (err, result) {
@@ -121,7 +125,7 @@ router.post('/buscar_cliente', function (req,res,next) {
     connection.query(sql, id, function (err, result) {
         if (err) console.log(err);
         var fecha = swapDataFront(result[0].FechaNacimiento);
-        var json = {'ID':result[0].ID,'DNI': result[0].DNI,'nombre': result[0].Nombre,'apellido':result[0].Apellido,'telefono':result[0].Telefono,'email':result[0].EMAIL,'data':fecha};
+        var json = {'ID':result[0].ID,'DNI': result[0].DNI,'nombre': result[0].Nombre,'apellido':result[0].Apellido,'telefono':result[0].Telefono,'email':result[0].EMAIL,'data':fecha,'MaxKm':result[0].MaxKm};
         res.send(json);
     });
 
@@ -142,6 +146,9 @@ router.post('/editar_cliente', function(req, res, next){
     var btel = checkTelefono(telefono);
     var email = req.body.email;
     var bemail = checkEmail(email);
+    var MaxKm = req.body.MaxKm;
+    var bMaxKm = checkMaxKm(MaxKm);
+    console.log(bMaxKm);
 
     //DD-MM-YYYY -> YYYY-DD-MM
     var fechaNacimineto = swapData(req.body.fechaNacimiento);
@@ -165,7 +172,9 @@ router.post('/editar_cliente', function(req, res, next){
                     if (btel === "ok") {
                         if (bemail === "ok") {
                             if (bdata === "ok") {
-                                ball = "ok";
+                                if(bMaxKm == "ok") {
+                                    ball = "ok";
+                                }
                             }
                         }
                     }
@@ -173,11 +182,11 @@ router.post('/editar_cliente', function(req, res, next){
             }
         }
 
-        var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata};
+        var json = {'estado':ball,'DNI': bdni,'nombre': bnom,'apellido':bape,'telefono':btel,'email':bemail,'data':bdata,'MaxKm':bMaxKm};
 
 
 
-        var sql = "UPDATE ClientData SET DNI = '"+dni+"', Nombre = '"+nombre+"', Apellido = '"+apellido+"', Telefono = '"+telefono+"', EMAIL = '"+email+"', FechaNacimiento ='"+fechaNacimineto+"' WHERE ID = "+req.body.id;
+        var sql = "UPDATE ClientData SET DNI = '"+dni+"', Nombre = '"+nombre+"', Apellido = '"+apellido+"', Telefono = '"+telefono+"', EMAIL = '"+email+"', FechaNacimiento ='"+fechaNacimineto+"', MaxKm ='"+MaxKm+"' WHERE ID = "+req.body.id;
         if(ball==="ok") {
 
             connection.query(sql, function (err, result) {
@@ -223,6 +232,11 @@ function checkTelefono(str){
 }
 function checkEmail(str){
     if(typeof str != 'string' || str === "") return "Datos incorrectos";
+    return "ok"
+}
+
+function checkMaxKm(str){
+    if(str === "") return "Datos incorrectos";
     return "ok"
 }
 
