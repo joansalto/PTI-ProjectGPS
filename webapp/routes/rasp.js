@@ -8,7 +8,7 @@ var mysql = require('mysql'),
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
-    if(/*req.session.logueado*/true){
+    if(req.session.logueado){
         var sql = 'SELECT RaspID,DNI from Rasps left join ClientData on ClientID=ID ORDER BY RaspID';
 
 

@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
     }
 });
 router.post('/', function(req, res) {
-    if(true){
+    if(req.session.logueado){
         var DNI = req.body.DNI;
         var sql = "select * from ClientData where DNI = '" + DNI +"'" ;
         console.log(sql);
