@@ -36,6 +36,12 @@ block content
                                 label(for="email") Email
                                 input.form-control(name="email", id="email", required="required")
                                 div.alert.alert-danger(style="display:none" id="error_email")
+                        .row
+                             div.form-group.col-md-6
+                                 label(for="MaxKm") MaxKm
+                                 input.form-control(name="MaxKm", id="MaxKm", required="required")
+                                 div.alert.alert-danger(style="display:none" id="error_MaxKm")
+
 
                 .modal-footer
                     button.btn.btn-success(type="button" id="botonAnadir" onclick="anadir_user()") Añadir
@@ -106,6 +112,8 @@ block content
             $('#error_email').css("display", "none");
             $('#fechaNacimiento').val("");
             $('#error_fechaNacimiento').css("display", "none");
+            $('#MaxKm').val("");
+            $('#error_MaxKm').css("display", "none");
             $('#botonAnadir').css("btn-primary", "btn-success");
             $('#botonAnadir').html("Añadir");
             $('#myModal').modal('show');
@@ -121,6 +129,7 @@ block content
                 $('#telefono').val(data.telefono);
                 $('#email').val(data.email);
                 $('#fechaNacimiento').val(data.data);
+                $('#MaxKm').val(data.MaxKm);
             });
             $('#botonAnadir').css("btn-success", "btn-primary");
             $('#botonAnadir').html("Editar");
@@ -144,6 +153,7 @@ block content
             var telefono = $('#telefono').val();
             var  email= $('#email').val();
             var  fechaNacimiento= $('#fechaNacimiento').val();
+            var  MaxKm= $('#MaxKm').val();
             if(dni === ""){
                 valido = false;
                 $('#error_dni').html("Dni no puede estar vacio.");
@@ -174,6 +184,11 @@ block content
                 $('#error_fechaNacimiento').html("Fecha nacimiento no puede estar vacio.");
                 $('#error_fechaNacimiento').css("display", "");
             }
+            if (MaxKm === "") {
+                valido = false;
+                $('#error_MaxKm').html("MaxKm no puede estar vacio.");
+                $('#error_MaxKm').css("display", "");
+            }
             if (valido) {
                 $.post('../client/alta_cliente',{
                     dni: dni,
@@ -181,7 +196,8 @@ block content
                     apellido:apellido,
                     telefono:telefono,
                     email: email,
-                    fechaNacimiento:fechaNacimiento
+                    fechaNacimiento:fechaNacimiento,
+                    MaxKm:MaxKm
 
                 }, function (data) {
                     var datos = data
@@ -213,6 +229,10 @@ block content
                             $('#error_fechaNacimiento').html(datos.data);
                             $('#error_fechaNacimiento').css("display", "");
                         }
+                        if (datos.MaxKm !== "ok") {
+                            $('#error_MaxKm').html(datos.MaxKm);
+                            $('#error_MaxKm').css("display", "");
+                        }
                     }
 
                 });
@@ -238,6 +258,7 @@ block content
             var telefono = $('#telefono').val();
             var email = $('#email').val();
             var fechaNacimiento = $('#fechaNacimiento').val();
+            var  MaxKm= $('#MaxKm').val();
             $.post('../client/editar_cliente', {
                 id : id,
                 dni: dni,
@@ -245,7 +266,8 @@ block content
                 apellido: apellido,
                 telefono: telefono,
                 email: email,
-                fechaNacimiento: fechaNacimiento
+                fechaNacimiento: fechaNacimiento,
+                MaxKm: MaxKm
 
             }, function (data) {
                 var datos = data
@@ -276,6 +298,10 @@ block content
                     if (datos.data !== "ok") {
                         $('#error_fechaNacimiento').html(datos.data);
                         $('#error_fechaNacimiento').css("display", "");
+                    }
+                    if (datos.MaxKm !== "ok") {
+                        $('#error_MaxKm').html(datos.MaxKm);
+                        $('#error_MaxKm').css("display", "");
                     }
                 }
             });
