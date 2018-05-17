@@ -25,6 +25,10 @@ block content
             .col-md-6
                 label Nivel de gasolina
                 canvas(id="fuelLvl" width="500" height="300")
+            .col-md-3
+                label Runtime
+                canvas(id="runtime" width="250" height="300")
+
 
 
     script.
@@ -32,9 +36,39 @@ block content
             SpeedGraph();
             RPMGraph();
             FuelGraph();
+            RunGraph();
         });
         function Actualizar() {
             $("#formActu").submit();
+        }
+        function RunGraph() {
+            var popCanvas = $("#runtime");
+            var RUNTIME={
+                label: "Minutos",
+                data: [#{runtimes}],
+                backgroundColor: 'yellow'
+            }
+            var Datos = {
+                labels: [#{sesions}],
+                datasets: [RUNTIME]
+            }
+            var chartOptions = {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 80,
+                        fontColor: 'rgb(60, 180, 100)'
+                    }
+                }
+            };
+            var barChart = new Chart(popCanvas, {
+                type: 'bar',
+                data: Datos,
+                options: chartOptions
+
+            });
+
         }
         function FuelGraph() {
             var popCanvas = $("#fuelLvl");
@@ -64,6 +98,7 @@ block content
                 options: chartOptions
 
             });
+
 
         }
         function RPMGraph() {

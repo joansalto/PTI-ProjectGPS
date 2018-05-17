@@ -21,12 +21,12 @@ router.post('/', function(req, res) {
     if(req.session.logueado){
         var DNI = req.body.DNI;
         var sql = "select * from ClientData where DNI = '" + DNI +"'" ;
-        console.log(sql);
         connection.query(sql, function (err,result) {
             if(err) console.log(sql);
             var infoCliente = result;
             sql = "SELECT* FROM  CarLocator.CarData WHERE idCliente = "+result[0].ID+" order by Fecha asc";
-            connection.query(sql, function (err,result) {
+            var idCliente = result[0].ID;
+            connection.query(sql,idCliente, function (err,result) {
                 if(err) console.log(sql);
                 var fechas, velocidad, rpm, fuel;
                 for(var i = 0; i < result.length; ++i){
@@ -49,7 +49,30 @@ router.post('/', function(req, res) {
                 velocidad = velocidad.substr(0,(velocidad.length -1));
                 rpm = rpm.substr(0,(rpm.length -1));
                 fuel = fuel.substr(0,(fuel.length -1));
-                res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel});
+                sql="SELECT MAX(distance) AS dis, MAX(runtime) AS runtime, Sesion  FROM  CarLocator.CarData WHERE  idCliente = "+idCliente+" GROUP BY Sesion"
+                connection.query(sql, function (err,result) {
+                    console.log(result);
+                    var sesion, runtime, distance;
+                    for(var i = 0; i < result.length; ++i){
+                        if (i === 0){
+                            sesion = "'"+result[i].Sesion+"',";
+                            runtime = (result[i].runtime/60) +",";
+                            distance = result[i].dis +",";
+                        }
+                        else {
+                            sesion =sesion + "'"+result[i].Sesion+"',";
+                            runtime =runtime+ (result[i].runtime/60) +",";
+                            distance =distance+  +result[i].dis +",";
+                        }
+                    }
+                    sesion = sesion.substr(0,(sesion.length -1));
+                    runtime = runtime.substr(0,(runtime.length -1));
+                    distance = distance.substr(0,(distance.length -1));
+                    console.log(runtime);
+                    res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel, sesions:sesion,runtimes:runtime,distances:distance});
+
+                });
+               // res.render(`controlpanel`,{infocliente:infocliente, dni:dni, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel});
             });
         });
     }else {

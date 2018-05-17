@@ -24,11 +24,9 @@ router.get('/', function(req, res, next) {
           console.log(totalrasp);
           connection.query('UPDATE CarLocator.Estadisticas set rasps = '+totalrasp, function (err, result){
               if (err) console.log(err);
-              console.log("meto rasps estadisticas");
           });
 
       });
-      console.log("Me  cago en el edu " + totalrasp);
       connection.query('Select sum(d.dis) as dista from (SELECT MAX(Distance) as dis from CarLocator.CarData group by Sesion) d', function (err, result){
           if (err) throw err;
           else distance = result[0].dista;
