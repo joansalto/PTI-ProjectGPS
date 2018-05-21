@@ -72,7 +72,7 @@ router.post('/', function(req, res) {
                     connection.query(sql, function (err,result ) {
                         if(err) console.log(err);
                         console.log(result);
-                        res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel, sesions:sesion,runtimes:runtime,distances:distance,selectSesions :result});
+                        res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel, sesions:sesion,runtimes:runtime,distances:distance,selectSesions :result, select:Sesionselected});
                     })
 
                 });

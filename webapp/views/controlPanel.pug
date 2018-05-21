@@ -16,9 +16,13 @@ block content
             .col-md-4
                 form(method="post" id="formActu" action="../controlPanel")
                     input(value= DNI style="display:none" name="DNI")
+                    label Sesión a mostrar
                     select.form-control(value="" name="sesion")
                         each row in selectSesions
-                            option(value= row.Sesion) #{row.Sesion}
+                            if row.Sesion  == select
+                                option(value=row.Sesion, "selected") #{row.Sesion}
+                            else
+                                option(value=row.Sesion) #{row.Sesion}
             br
             br
         .row
