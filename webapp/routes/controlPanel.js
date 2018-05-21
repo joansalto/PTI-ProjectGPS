@@ -20,14 +20,15 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
     if(req.session.logueado){
         var DNI = req.body.DNI;
+        var Sesionselected = req.body.sesion;
         var sql = "select * from ClientData where DNI = '" + DNI +"'" ;
         connection.query(sql, function (err,result) {
             if(err) console.log(sql);
             var infoCliente = result;
-            sql = "SELECT* FROM  CarLocator.CarData WHERE idCliente = "+result[0].ID+" order by Fecha asc";
+            sql = "SELECT* FROM  CarLocator.CarData WHERE idCliente = "+result[0].ID+" and Sesion = "+Sesionselected+" order by Fecha asc";
             var idCliente = result[0].ID;
             connection.query(sql,idCliente, function (err,result) {
-                if(err) console.log(sql);
+                console.log(sql);
                 var fechas, velocidad, rpm, fuel;
                 for(var i = 0; i < result.length; ++i){
                     var date = format(result[i].Fecha);
@@ -49,9 +50,8 @@ router.post('/', function(req, res) {
                 velocidad = velocidad.substr(0,(velocidad.length -1));
                 rpm = rpm.substr(0,(rpm.length -1));
                 fuel = fuel.substr(0,(fuel.length -1));
-                sql="SELECT MAX(distance) AS dis, MAX(runtime) AS runtime, Sesion  FROM  CarLocator.CarData WHERE  idCliente = "+idCliente+" GROUP BY Sesion"
+                sql="SELECT MAX(distance) AS dis, MAX(runtime) AS runtime, Sesion  FROM  CarLocator.CarData WHERE  idCliente = "+idCliente+" GROUP BY Sesion";
                 connection.query(sql, function (err,result) {
-                    console.log(result);
                     var sesion, runtime, distance;
                     for(var i = 0; i < result.length; ++i){
                         if (i === 0){
@@ -68,8 +68,12 @@ router.post('/', function(req, res) {
                     sesion = sesion.substr(0,(sesion.length -1));
                     runtime = runtime.substr(0,(runtime.length -1));
                     distance = distance.substr(0,(distance.length -1));
-                    console.log(runtime);
-                    res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel, sesions:sesion,runtimes:runtime,distances:distance});
+                    sql = "SELECT distinct Sesion FROM CarData where  idCliente ="+idCliente;
+                    connection.query(sql, function (err,result ) {
+                        if(err) console.log(err);
+                        console.log(result);
+                        res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel, sesions:sesion,runtimes:runtime,distances:distance,selectSesions :result});
+                    })
 
                 });
                // res.render(`controlpanel`,{infocliente:infocliente, dni:dni, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel});

@@ -26,19 +26,21 @@ router.post('/', function(req, res) {
     var y = req.body.y;
     var sesion = req.body.sesion;
     //console.log(data+" "+speed+" "+rpm+" "+lvl+" "+time+" "+distance);
-    connection.query('SELECT clientID FROM CarLocator.Rasps where RaspID = '+idrasp +' and clientID is not null',function(error, result){
-        if(error){
-            console.log(error);
-        }else{
-            connection.query('INSERT INTO CarData (ID_rasp, Fecha, RPM, Speed, Fuel_lvl, Runtime, Distance, X, Y, idCliente,Sesion) VALUES ('+idrasp+', "'+data+'" , '+rpm+', '+speed+','+lvl+', '+time+','+distance+',"'+x+'","'+y+'",'+result[0].clientID+','+sesion+')', function(error, result){
-                if(error){
-                    console.log(error);
-                }else{
-                    //console.log(result);
-                }
-            });
-        }
-    });
+    if(data !== "" && speed !== "" && rpm !== ""&& lvl !== "" && time !== ""&& distance !== ""&& idrasp !== ""&& x !== ""&& y !== "" && sesion !== "") {
+        connection.query('SELECT clientID FROM CarLocator.Rasps where RaspID = ' + idrasp + ' and clientID is not null', function (error, result) {
+            if (error) {
+                console.log(error);
+            } else {
+                connection.query('INSERT INTO CarData (ID_rasp, Fecha, RPM, Speed, Fuel_lvl, Runtime, Distance, X, Y, idCliente,Sesion) VALUES (' + idrasp + ', "' + data + '" , ' + rpm + ', ' + speed + ',' + lvl + ', ' + time + ',' + distance + ',"' + x + '","' + y + '",' + result[0].clientID + ',' + sesion + ')', function (error, result) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        //console.log(result);
+                    }
+                });
+            }
+        });
+    }
     res.end();
 
 
