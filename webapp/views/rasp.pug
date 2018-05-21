@@ -25,6 +25,7 @@ block content
                             td= item.RaspID
                                 form(method="post" id="form_"+item.DNI action="../controlPanel")
                                     input(value=item.DNI style="display:none" name="DNI")
+                                    input(value= 1 style="display:none" name="sesion")
                             td= item.DNI
                             td(style="text-align:center;")
                                 if item.DNI == null

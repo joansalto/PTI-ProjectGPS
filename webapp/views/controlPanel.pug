@@ -3,8 +3,6 @@ extends ./navbar
 
 block content
     .main.container
-        form(method="post" id="formActu" action="../controlPanel")
-            input(value= DNI style="display:none" name="DNI")
         .row
             .col-md-9
                 h1 Panel de Control de #{infoCliente[0].Nombre} #{infoCliente[0].Apellido}
@@ -13,6 +11,20 @@ block content
             .col-md-3
                 br
                 button.btn.btn-success(onclick="Actualizar()", id="Actu") Actualizar página
+        .row
+            .col-md-4
+            .col-md-4
+                form(method="post" id="formActu" action="../controlPanel")
+                    input(value= DNI style="display:none" name="DNI")
+                    label Sesión a mostrar
+                    select.form-control(value="" name="sesion")
+                        each row in selectSesions
+                            if row.Sesion  == select
+                                option(value=row.Sesion, "selected") #{row.Sesion}
+                            else
+                                option(value=row.Sesion) #{row.Sesion}
+            br
+            br
         .row
             .col-md-6
                 label Velocidad
@@ -25,9 +37,9 @@ block content
             .col-md-6
                 label Nivel de gasolina
                 canvas(id="fuelLvl" width="500" height="300")
-            .col-md-3
+            .col-md-6
                 label Runtime
-                canvas(id="runtime" width="250" height="300")
+                canvas(id="runtime" width="250" height="150")
 
 
 
