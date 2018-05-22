@@ -17,14 +17,16 @@ block content
                 form(method="post" id="formActu" action="../controlPanel")
                     input(value= DNI style="display:none" name="DNI")
                     label Sesión a mostrar
-                    select.form-control(value="" name="sesion")
+                    select.form-control(value="" name="sesion", onchange="Actualizar()")
                         each row in selectSesions
                             if row.Sesion  == select
                                 option(value=row.Sesion, "selected") #{row.Sesion}
                             else
                                 option(value=row.Sesion) #{row.Sesion}
-            br
-            br
+            .col-md-4
+                p Kilometros recorridos en total:
+        br
+        br
         .row
             .col-md-6
                 label Velocidad
@@ -40,16 +42,50 @@ block content
             .col-md-6
                 label Runtime
                 canvas(id="runtime" width="250" height="150")
+        br
+        br
+        .row
 
+            .col-md-12
+                label Ruta realizada
+                div(id="map" style="width:100%;height:550px;")
 
 
     script.
+        var bounds;
+        var oms;
+        var iconBase;
         $(function () {
             SpeedGraph();
             RPMGraph();
             FuelGraph();
             RunGraph();
         });
+        function initMap() {
+            iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+            bounds = new google.maps.LatLngBounds();
+            var map = new google.maps.Map(document.getElementById('map'), {});
+            var marcadores = #{marcadores};
+            var i;
+            for (i = 0; i < marcadores.length; i++) {
+                var position = {lat: marcadores[i][0], lng: marcadores[i][1]};
+                addMarker(position,map);
+
+            }
+
+            map.fitBounds(bounds);
+            map.panToBounds(bounds);
+
+        }
+        function addMarker(position, map) {
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map
+            });
+            var loc = new google.maps.LatLng(marker.position.lat(), marker.position.lng());
+            bounds.extend(loc);
+            
+        }
         function Actualizar() {
             $("#formActu").submit();
         }
@@ -67,7 +103,7 @@ block content
             var chartOptions = {
                 legend: {
                     display: true,
-                    position: 'bottom',
+                    position: 'top',
                     labels: {
                         boxWidth: 80,
                         fontColor: 'rgb(60, 180, 100)'
@@ -87,11 +123,10 @@ block content
             var FUEL = {
                 label: "Porcentaje",
                 data: [#{fuel}],
-                backgroundColor: 'transparent',
-                borderColor: 'blue'
+                backgroundColor: 'blue'
             }
             var Datos = {
-                labels: [#{fechas}],
+                labels: [#{sesions}],
                 datasets: [FUEL]
             }
             var chartOptions = {
@@ -100,12 +135,12 @@ block content
                     position: 'top',
                     labels: {
                         boxWidth: 80,
-                        fontColor: 'black'
+                        fontColor: 'rgb(60, 180, 100)'
                     }
                 }
-            };
+            }
             var barChart = new Chart(popCanvas, {
-                type: 'line',
+                type: 'bar',
                 data: Datos,
                 options: chartOptions
 
@@ -176,3 +211,4 @@ block content
 
             });
         }
+    script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPny4cI07YVs8rPptpcBTi7QtrbmybSAA&callback=initMap")

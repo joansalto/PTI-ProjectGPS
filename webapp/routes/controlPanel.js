@@ -23,34 +23,42 @@ router.post('/', function(req, res) {
         var Sesionselected = req.body.sesion;
         var sql = "select * from ClientData where DNI = '" + DNI +"'" ;
         connection.query(sql, function (err,result) {
-            if(err) console.log(sql);
+            if(err) console.log(err);
             var infoCliente = result;
             sql = "SELECT* FROM  CarLocator.CarData WHERE idCliente = "+result[0].ID+" and Sesion = "+Sesionselected+" order by Fecha asc";
             var idCliente = result[0].ID;
             connection.query(sql,idCliente, function (err,result) {
-                console.log(sql);
-                var fechas, velocidad, rpm, fuel;
+                var fechas, velocidad, rpm, fuel, marcadores;
+                var primero = false;
                 for(var i = 0; i < result.length; ++i){
                     var date = format(result[i].Fecha);
                     date = date.toString().substr(0,10) +" "+ date.toString().substr(11,8);
+                    console.log(result[i].X);
+                    console.log(result[i].Y);
+                    if(!primero && result[i].X != 0 && result[i].Y != 0) {
+                        marcadores  = "[["+result[i].X+","+result[i].Y+"],";
+                        primero = true;
+                    }
+                    else if(result[i].X != 0 && result[i].Y != 0) marcadores  = marcadores + "["+result[i].X+","+result[i].Y+"],";
                     if (i === 0){
                         fechas = "'"+date+"',";
                         velocidad = result[i].Speed +",";
                         rpm = result[i].RPM +",";
-                        fuel = result[i].Fuel_lvl +",";
+
+
                     }
                     else {
                         fechas =fechas + "'"+date+"',";
                         velocidad =velocidad+  +result[i].Speed +",";
                         rpm =rpm+  +result[i].RPM +",";
-                        fuel =fuel+  +result[i].Fuel_lvl +",";
+
                     }
                 }
                 fechas = fechas.substr(0,(fechas.length -1));
                 velocidad = velocidad.substr(0,(velocidad.length -1));
                 rpm = rpm.substr(0,(rpm.length -1));
-                fuel = fuel.substr(0,(fuel.length -1));
-                sql="SELECT MAX(distance) AS dis, MAX(runtime) AS runtime, Sesion  FROM  CarLocator.CarData WHERE  idCliente = "+idCliente+" GROUP BY Sesion";
+                marcadores = marcadores.substr(0,(marcadores.length -1))+"]";
+                sql="SELECT MAX(distance) AS dis, MAX(runtime) AS runtime,Fuel_lvl ,  Sesion  FROM  CarLocator.CarData WHERE  idCliente = "+idCliente+" GROUP BY Sesion";
                 connection.query(sql, function (err,result) {
                     var sesion, runtime, distance;
                     for(var i = 0; i < result.length; ++i){
@@ -58,21 +66,23 @@ router.post('/', function(req, res) {
                             sesion = "'"+result[i].Sesion+"',";
                             runtime = (result[i].runtime/60) +",";
                             distance = result[i].dis +",";
+                            fuel = result[i].Fuel_lvl +",";
                         }
                         else {
                             sesion =sesion + "'"+result[i].Sesion+"',";
                             runtime =runtime+ (result[i].runtime/60) +",";
                             distance =distance+  +result[i].dis +",";
+                            fuel =fuel+  +result[i].Fuel_lvl +",";
                         }
                     }
                     sesion = sesion.substr(0,(sesion.length -1));
                     runtime = runtime.substr(0,(runtime.length -1));
                     distance = distance.substr(0,(distance.length -1));
+                    fuel = fuel.substr(0,(fuel.length -1));
                     sql = "SELECT distinct Sesion FROM CarData where  idCliente ="+idCliente;
                     connection.query(sql, function (err,result ) {
                         if(err) console.log(err);
-                        console.log(result);
-                        res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel, sesions:sesion,runtimes:runtime,distances:distance,selectSesions :result, select:Sesionselected});
+                        res.render(`controlPanel`,{infoCliente:infoCliente, DNI:DNI, datos:result, fechas:fechas, velocidades:velocidad, rpm:rpm, fuel:fuel, sesions:sesion,runtimes:runtime,distances:distance,selectSesions :result, select:Sesionselected, marcadores:marcadores});
                     })
 
                 });
