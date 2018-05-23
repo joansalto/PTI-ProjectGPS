@@ -35,8 +35,9 @@ block content
                                     button.btn.btn-warning.btn-xs(onclick="validar_desasociar('"+item.RaspID+"');")
                                         span.glyphicon.glyphicon-fire(aria-hidden= 'true')
                             td(style="text-align:center;")
-                                button.btn.btn-success.btn-xs(onclick="verPanelControl('form_"+item.DNI+"')")
-                                    span.glyphicon.glyphicon-zoom-in(aria-hidden= 'true')
+                                if item.DNI != null
+                                    button.btn.btn-success.btn-xs(onclick="verPanelControl('form_"+item.DNI+"')")
+                                        span.glyphicon.glyphicon-zoom-in(aria-hidden= 'true')
                             td(style="text-align:center;")
                                 button.btn.btn-danger.btn-xs(onclick="validar_eliminar('"+item.RaspID+"');")
                                     span.glyphicon.glyphicon-remove(aria-hidden= 'true')
@@ -189,7 +190,6 @@ block content
                         RaspID: RaspID
                     },
                     function (data) {
-                        console.log(data);
                         if (data.estado === "ok") {
                             $('#añadir').modal('show');
                             location.reload();
