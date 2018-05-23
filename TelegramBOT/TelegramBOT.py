@@ -14,6 +14,8 @@ import json
 import requests
 import mysql.connector as mdb
 import sys
+import multiprocessing as mp
+import time
 
 TOKEN = ""
 TOKEN = sys.argv[
@@ -63,12 +65,12 @@ def register_database(connection, cursor, DNI, ID, chat_id):
 def check_client(cursor, DNI, ID):
     cursor.execute("SELECT * from TelegramBOT WHERE DNI_Client=%s AND ID_Client=%s", (DNI, ID))
     row = cursor.fetchall()
-    print(row)
     if (len(row) > 0): return -1
-    cursor.execute("SELECT ID from ClientData WHERE DNI=%s AND ID=%s", (DNI, ID))
+    cursor.execute("SELECT ID,Nombre,Apellido from ClientData WHERE DNI=%s AND ID=%s", (DNI, ID))
     row = cursor.fetchall()
+    print(row)
     if len(row) != 0:
-        return 1
+        return [1,row[0][1],row[0][2]]
     else:
         return 0
 
@@ -87,68 +89,168 @@ def unregister_database(connection, cursor, chat_id):
     connection.commit()
 
 
-connection = mdb.connect(user='root', password='CarLocator',
-                         host='carlocator.cshcpypejvib.us-west-2.rds.amazonaws.com', database='CarLocator')
-cursor = connection.cursor()
-while (1):
-    messages = get_updates(readed)
-    if len(messages["result"]) > 0:
-        readed = messages["result"][0]["update_id"]
+def check_contract(connection2, cursor2, person):
+    cursor2.execute(
+        "SELECT * FROM CarData WHERE idCliente = %s AND ID = (SELECT MAX(ID) FROM CarData WHERE idCliente = %s)",
+        (person[1], person[1]))
 
-    for message in messages["result"]:
-        chat_id = message["message"]["chat"]["id"]
-        if "text" in message["message"]:  # aqui van los comandos que bot puede leer
-            if len(message["message"]["text"]) >= 13:
-                if message["message"]["text"][0:9] == "/register":
-                    number_of_spaces = 0
-                    positions_white = []
-                    for iterator, char in enumerate(message["message"]["text"]):
-                        if (char == " "):
-                            number_of_spaces += 1
-                            positions_white.append(iterator)
-                    if (number_of_spaces == 2):
-                        DNI = message["message"]["text"][positions_white[0] + 1:positions_white[1]]
-                        ID = message["message"]["text"][positions_white[1] + 1:]
-                        status = check_client(cursor, DNI, ID)
-                        print(status)
-                        if status == 1:
-                            register_database(connection, cursor, DNI, ID, chat_id)
-                            send_message("User with DNI:{} and ID:{} has enabled subscription mode".format(DNI, ID),
-                                         chat_id)
-                        elif status == -1:
-                            send_message("Client already has subscription enable", chat_id)
-                        else:
-                            send_message("Not a valid client please verify your submited data", chat_id)
-                    else:
-                        send_message("Not a valid command. Please use /help to check for valid commands", chat_id)
-                else:
-                    send_message("Not a valid command. Please use /help to check for valid commands", chat_id)
-            elif len(message["message"]["text"]) == 6:
-                if message["message"]["text"][0:6] == "/start":
-                    send_message(
-                        "Welcome to CarLocatorBOT\nYou can use /register DNI ID to enable information reciving \nYou can use /unregister to disable subscription",
-                        chat_id)
-                else:
-                    send_message("Not a valid command. Please use /help to check for valid commands", chat_id)
-            elif len(message["message"]["text"]) == 5:
-                if message["message"]["text"][0:5] == "/help":
-                    send_message(
-                        "Welcome to CarLocatorBOT\nYou can use /register DNI ID to enable information reciving \nYou can use /unregister to disable subscription",
-                        chat_id)
-                else:
-                    send_message("Not a valid command. Please use /help to check for valid commands", chat_id)
-            elif len(message["message"]["text"]) == 11:
-                if message["message"]["text"][0:12] == "/unregister":
-                    if check_telegram(cursor, chat_id):
-                        unregister_database(connection, cursor, chat_id)
-                        send_message("Subscription has been disabled",
-                                     chat_id)
-                    else:
-                        send_message("You are not subscribed", chat_id)
-                else:
-                    send_message("Not a valid command. Please use /help to check for valid commands", chat_id)
+    row = cursor2.fetchone()
+    connection2.commit()
+    if len(row) != 0:
+        print(row)
+        speed = row[4]
+        fuel = row[5]
+        pos_x = row[8]
+        pos_y = row[9]
+        rpm = row[3]
+        ID = row[0]
+        dangers = []
+        #adjust paramaters advising here!!!!!!!!!!!!!!!!!!!!!!!
+        if speed > 120:
+            if speed > 140:
+                dangers.append("ext_speed")
             else:
-                send_message("Not a valid command. Please use /help to check for valid commands", chat_id)
+                dangers.append("speed")
         else:
-            send_message("Only text commands are allowed. Please use /help to check for valid commands", chat_id)
-        readed += 1
+            dangers.append("none")
+
+        if rpm >= 2000:
+            if rpm > 2500:
+                dangers.append("ext_rpm")
+            else:
+                dangers.append("rpm")
+        else:
+            dangers.append("none")
+
+        if fuel < 50:
+            if fuel < 45:
+                dangers.append("ext_fuel")
+            else:
+                dangers.append("fuel")
+        else:
+            dangers.append("none")
+        dangers.append(ID)
+        return dangers
+    return ["none", "none", "none"]
+
+
+def checker():
+    connection2 = mdb.connect(user='root', password='CarLocator',
+                              host='carlocator.cshcpypejvib.us-west-2.rds.amazonaws.com', database='CarLocator')
+    cursor2 = connection2.cursor()
+    checked_list = {}
+    while 1:
+        cursor2.execute("SELECT * FROM TelegramBOT")
+
+        registreds = cursor2.fetchall()
+        connection2.commit()
+        print(registreds)
+        for person in registreds:
+            print(person)
+            checks = check_contract(connection2, cursor2, person)
+            if checks != 3:
+                if person[1] in checked_list and checked_list[person[1]] != checks[-1]:
+                    send_message_if_danger(checks, person)
+                    checked_list[person[1]] = checks[-1]
+                elif person[1] not in checked_list:
+                    send_message_if_danger(checks, person)
+                    checked_list[person[1]] = checks[-1]
+    sleep(9.5)
+
+
+def send_message_if_danger(checks, person):
+    if checks[0] == "ext_speed":
+        send_message("La velocidad és excesivamente alta!", person[3])
+    elif checks[0] == "speed":
+        send_message("Por favor modere la velocidad esta viajando demasiado rapido", person[3])
+    if checks[1] == "ext_rpm":
+        send_message("Por favor canvie de marcha esta revolucionando en exceso el motor", person[3])
+    elif checks[1] == "rpm":
+        send_message("Esta accelerando ligeramente el motor", person[3])
+    if checks[2] == "ext_fuel":
+        send_message("Pongase de camino a una gasolinera cercana de forma urgente", person[3])
+    elif checks[2] == "fuel":
+        send_message("Vigile el deposito del coche", person[3])
+
+
+# MAIN
+if __name__ == '__main__':
+    connection = mdb.connect(user='root', password='CarLocator',
+                             host='carlocator.cshcpypejvib.us-west-2.rds.amazonaws.com', database='CarLocator')
+    cursor = connection.cursor()
+    mp.set_start_method('spawn')
+    p = mp.Process(target=checker)
+    p.start()
+    while 1:
+        print("tele")
+        messages = get_updates(readed)
+        if len(messages["result"]) > 0:
+            readed = messages["result"][0]["update_id"]
+
+        for message in messages["result"]:
+            if "message" in message:
+                chat_id = message["message"]["chat"]["id"]
+                if "text" in message["message"]:  # aqui van los comandos que bot puede leer
+                    if len(message["message"]["text"]) >= 13:
+                        if message["message"]["text"][0:9] == "/register":
+                            number_of_spaces = 0
+                            positions_white = []
+                            for iterator, char in enumerate(message["message"]["text"]):
+                                if (char == " "):
+                                    number_of_spaces += 1
+                                    positions_white.append(iterator)
+                            if (number_of_spaces == 2):
+                                DNI = message["message"]["text"][positions_white[0] + 1:positions_white[1]]
+                                ID = message["message"]["text"][positions_white[1] + 1:]
+                                status = check_client(cursor, DNI, ID)
+                                status2 = check_telegram(cursor, chat_id)
+                                if status[0] == 1 and status2 == 0:
+                                    register_database(connection, cursor, DNI, ID, chat_id)
+                                    send_message(
+                                        "{} {} ha activado las notificaciones. Bienvenido al servicio de telegram de CarLocator".format(status[1],status[2]),
+                                        chat_id)
+                                elif status[0] == -1:
+                                    send_message("Ya estavan activadas las notificaciones", chat_id)
+                                elif status2 == 1:
+                                    send_message("Este movil ya tiene un DNI asociado, desasocielo primero por favor", chat_id)
+                                else:
+                                    send_message("Cliente no valido por favor verifique la informacion subministrada", chat_id)
+                            else:
+                                send_message("Comando no valiod. Por favor use /help para mirar los comandos validos",
+                                             chat_id)
+                        else:
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                    elif len(message["message"]["text"]) == 6:
+                        if message["message"]["text"][0:6] == "/start":
+                            send_message(
+                                "Bienvenido a CarLocatorBOT\nPuede usar /register DNI ID para habilitar el recivir informacion \nPuede usar /unregister para desactivar el recivir informacion",
+                                chat_id)
+                        else:
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                    elif len(message["message"]["text"]) == 5:
+                        if message["message"]["text"][0:5] == "/help":
+                            send_message(
+                                "Bienvenido a CarLocatorBOT\nPuede usar /register DNI ID para habilitar el recivir informacion \nPuede usar /unregister para desactivar el recivir informacion",
+                                chat_id)
+                        elif message["message"]["text"][0:5] == "/bobi":
+                            send_message(
+                                "Lamentamos las molestias pero se ha equivocado de proyecto, yo no le voy a recordar donde guarda las cosas.",
+                                chat_id)
+                        else:
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                    elif len(message["message"]["text"]) == 11:
+                        if message["message"]["text"][0:12] == "/unregister":
+                            if check_telegram(cursor, chat_id):
+                                unregister_database(connection, cursor, chat_id)
+                                send_message("Ha desactivado las notificaciones",
+                                             chat_id)
+                            else:
+                                send_message("Las notificaciones ya estavan desactivadas para este movil", chat_id)
+                        else:
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                    else:
+                        send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                else:
+                    send_message("Comando no valiod. Por favor use /help para mirar los comandos validos",
+                                 chat_id)
+            readed += 1
