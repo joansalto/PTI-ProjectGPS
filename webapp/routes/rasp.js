@@ -43,7 +43,6 @@ router.post('/anadir_raspberry', function(req, res, next){
 
     var sql_check = 'SELECT RaspID FROM Rasps WHERE RaspID="'+RaspID+'"';
     connection.query(sql_check, function (err, check ,result) {
-        console.log(sql_check);
 
         if (err) console.log(err);
         if (check.length!=0) {
@@ -51,11 +50,9 @@ router.post('/anadir_raspberry', function(req, res, next){
             bRaspID="RaspID no se puede repetir";
         }
         var json = {'estado':ball,'DNI': bDNI,'RaspID': bRaspID};
-        console.log(json);
         var sql = 'INSERT INTO Rasps (RaspID,ClientID) VALUES ( "'+RaspID+'",(SELECT ID FROM ClientData WHERE DNI="'+DNI+'") )';
         if(json.estado==="ok") {
             connection.query(sql, function (err, result) {
-                console.log(sql);
                 if (err) console.log(err);
             });
         }
@@ -87,10 +84,8 @@ router.post('/anadir_raspberry', function(req, res, next){
 
 router.post('/desasociar', function(req, res, next){
     var RaspID = req.body.RaspID;
-    console.log(RaspID);
     var sql = 'UPDATE Rasps SET ClientID = NULL WHERE RaspID ="'+RaspID+'"';
     connection.query(sql, function (err, result) {
-        console.log(sql);
         if (err) console.log(err);
 
     });
@@ -100,11 +95,8 @@ router.post('/desasociar', function(req, res, next){
 router.post('/asociar', function(req, res, next){
     var RaspID = req.body.RaspID;
     var DNI = req.body.DNI;
-    console.log(RaspID);
-    console.log(DNI);
     var sql = 'UPDATE Rasps SET ClientID = (SELECT ID FROM ClientData WHERE DNI ="'+DNI+'") WHERE RaspID="'+RaspID+'"';
     connection.query(sql, function (err, result) {
-        console.log(sql);
         if (err) console.log(err);
 
     });
@@ -113,16 +105,13 @@ router.post('/asociar', function(req, res, next){
 });
 router.post('/eliminar', function(req, res, next){
     var RaspID = req.body.RaspID;
-    console.log(RaspID);
     var sql = 'DELETE FROM CarData WHERE ID_rasp ="'+RaspID+'"';
     connection.query(sql, function (err, result) {
-        console.log(sql);
         if (err) console.log(err);
 
     });
     var sql = 'DELETE FROM Rasps WHERE RaspID ="'+RaspID+'"';
     connection.query(sql, function (err, result) {
-        console.log(sql);
         if (err) console.log(err);
 
     });

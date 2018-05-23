@@ -50,9 +50,7 @@ router.post('/alta_cliente', function(req, res, next){
     var bdata = isValidData(fechaNacimineto);
 
     var sql_check ='SELECT DNI FROM ClientData WHERE DNI = "' + dni + '"';
-    console.log(sql_check);
     connection.query(sql_check, function (err, result) {
-        console.log(sql_check);
 
         if (err) console.log(err);
         if (result.length!=0) {
@@ -107,7 +105,7 @@ router.post('/baja_cliente', function (req, res, next) {
 
     connection.query(sql, elim, function (err, result) {
         console.log(sql);
-        if (err) throw console.log(err);
+        if (err) console.log(err);
 
     });
     res.send({'estado':'ok'});
@@ -187,7 +185,6 @@ router.post('/editar_cliente', function(req, res, next){
         if(ball==="ok") {
 
             connection.query(sql, function (err, result) {
-                console.log(sql);
                 if (err) console.log(err);
 
             });
@@ -256,7 +253,6 @@ function swapDataFront(str){
 
 function isValidData(str){
     // STRING FORMAT yyyy-mm-dd
-    console.log(str);
     if(str=="" || str==null){return "Datos incorrectos";}
 
     // m[1] is year 'YYYY' * m[2] is month 'MM' * m[3] is day 'DD'
@@ -278,7 +274,6 @@ function isValidData(str){
     if( (m[2].length < 2) || m[2] < 1 || m[2] > 12){ret = "Mes inexistente";}
     // DAY CHECK
     if( (m[3].length < 2) || m[3] < 1 || m[3] > 31){ret = "Dia Inexistente";}
-    console.log(m[3] +'-'+ m[2]+'-'+m[1]);
     return ret;
 }
 module.exports = router;

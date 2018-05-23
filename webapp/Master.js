@@ -25,9 +25,7 @@ connection.end();*/
 
 //Ejemplo: POST http://localhost:80/items
 app.post('/items', function(req, res) {
-    console.log("Han entrado");
     var obj = req.body;
-    console.log(obj);
     var data = req.body.data;
     var speed = req.body.speed;
     var rpm = req.body.rpm;
@@ -40,7 +38,6 @@ app.post('/items', function(req, res) {
 //    var y = req.body.y;
 
 
-    console.log(data+" "+speed+" "+rpm+" "+lvl+" "+time+" "+distance);
 
     //connection.connect();
 

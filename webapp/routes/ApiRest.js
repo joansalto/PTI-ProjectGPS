@@ -34,8 +34,6 @@ router.post('/', function(req, res) {
                 connection.query('INSERT INTO CarData (ID_rasp, Fecha, RPM, Speed, Fuel_lvl, Runtime, Distance, X, Y, idCliente,Sesion) VALUES (' + idrasp + ', "' + data + '" , ' + rpm + ', ' + speed + ',' + lvl + ', ' + time + ',' + distance + ',"' + x + '","' + y + '",' + result[0].clientID + ',' + sesion + ')', function (error, result) {
                     if (error) {
                         console.log(error);
-                    } else {
-                        //console.log(result);
                     }
                 });
             }
