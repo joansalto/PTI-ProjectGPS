@@ -70,7 +70,7 @@ def check_client(cursor, DNI, ID):
     row = cursor.fetchall()
     print(row)
     if len(row) != 0:
-        return [1,row[0][1],row[0][2]]
+        return [1, row[0][1], row[0][2]]
     else:
         return 0
 
@@ -96,6 +96,18 @@ def check_contract(connection2, cursor2, person):
 
     row = cursor2.fetchone()
     connection2.commit()
+    cursor2.execute(
+        "SELECT Distance FROM CarData WHERE idCliente = %s AND ID = (SELECT MIN(ID) FROM CarData WHERE idCliente = %s)",
+        (person[1], person[1]))
+    distance_min = cursor2.fetchall()
+    distance_min = distance_min[0][0]
+    print(distance_min)
+    connection2.commit()
+    cursor2.execute("SELECT MaxKM FROM ClientData WHERE ID = %s",(person[1],))
+    MaxKM = cursor2.fetchall()
+    MaxKM = MaxKM[0][0]
+    print(MaxKM)
+    connection2.commit()
     if len(row) != 0:
         print(row)
         speed = row[4]
@@ -104,8 +116,9 @@ def check_contract(connection2, cursor2, person):
         pos_y = row[9]
         rpm = row[3]
         ID = row[0]
+        distance = row[7]
         dangers = []
-        #adjust paramaters advising here!!!!!!!!!!!!!!!!!!!!!!!
+        # adjust paramaters advising here!!!!!!!!!!!!!!!!!!!!!!!
         if speed > 120:
             if speed > 140:
                 dangers.append("ext_speed")
@@ -122,11 +135,18 @@ def check_contract(connection2, cursor2, person):
         else:
             dangers.append("none")
 
-        if fuel < 50:
-            if fuel < 45:
+        if fuel < 15:
+            if fuel < 5:
                 dangers.append("ext_fuel")
             else:
                 dangers.append("fuel")
+        else:
+            dangers.append("none")
+        if (distance-distance_min) >= (MaxKM*1000*90)/100:
+            if (distance-distance_min)>= (MaxKM*1000):
+                dangers.append("ext_dis")
+            else:
+                dangers.appends("dis")
         else:
             dangers.append("none")
         dangers.append(ID)
@@ -171,6 +191,10 @@ def send_message_if_danger(checks, person):
         send_message("Pongase de camino a una gasolinera cercana de forma urgente", person[3])
     elif checks[2] == "fuel":
         send_message("Vigile el deposito del coche", person[3])
+    if checks[3] == "ext_dis":
+        send_message("Ha excedido la distancia màxima que puede recorrer porfavor pare inmediatamente cuando pueda", person[3])
+    elif checks[3] == "dis":
+        send_message("Le queda menos de un 10% de distancia que puede recorrer", person[3])
 
 
 # MAIN
@@ -207,26 +231,31 @@ if __name__ == '__main__':
                                 if status[0] == 1 and status2 == 0:
                                     register_database(connection, cursor, DNI, ID, chat_id)
                                     send_message(
-                                        "{} {} ha activado las notificaciones. Bienvenido al servicio de telegram de CarLocator".format(status[1],status[2]),
+                                        "{} {} ha activado las notificaciones. Bienvenido al servicio de telegram de CarLocator".format(
+                                            status[1], status[2]),
                                         chat_id)
                                 elif status[0] == -1:
                                     send_message("Ya estavan activadas las notificaciones", chat_id)
                                 elif status2 == 1:
-                                    send_message("Este movil ya tiene un DNI asociado, desasocielo primero por favor", chat_id)
+                                    send_message("Este movil ya tiene un DNI asociado, desasocielo primero por favor",
+                                                 chat_id)
                                 else:
-                                    send_message("Cliente no valido por favor verifique la informacion subministrada", chat_id)
+                                    send_message("Cliente no valido por favor verifique la informacion subministrada",
+                                                 chat_id)
                             else:
                                 send_message("Comando no valiod. Por favor use /help para mirar los comandos validos",
                                              chat_id)
                         else:
-                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos",
+                                         chat_id)
                     elif len(message["message"]["text"]) == 6:
                         if message["message"]["text"][0:6] == "/start":
                             send_message(
                                 "Bienvenido a CarLocatorBOT\nPuede usar /register DNI ID para habilitar el recivir informacion \nPuede usar /unregister para desactivar el recivir informacion",
                                 chat_id)
                         else:
-                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos",
+                                         chat_id)
                     elif len(message["message"]["text"]) == 5:
                         if message["message"]["text"][0:5] == "/help":
                             send_message(
@@ -237,7 +266,8 @@ if __name__ == '__main__':
                                 "Lamentamos las molestias pero se ha equivocado de proyecto, yo no le voy a recordar donde guarda las cosas.",
                                 chat_id)
                         else:
-                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos",
+                                         chat_id)
                     elif len(message["message"]["text"]) == 11:
                         if message["message"]["text"][0:12] == "/unregister":
                             if check_telegram(cursor, chat_id):
@@ -247,7 +277,8 @@ if __name__ == '__main__':
                             else:
                                 send_message("Las notificaciones ya estavan desactivadas para este movil", chat_id)
                         else:
-                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
+                            send_message("Comando no valiod. Por favor use /help para mirar los comandos validos",
+                                         chat_id)
                     else:
                         send_message("Comando no valiod. Por favor use /help para mirar los comandos validos", chat_id)
                 else:
