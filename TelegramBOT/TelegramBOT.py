@@ -65,14 +65,13 @@ def register_database(connection, cursor, DNI, ID, chat_id):
 def check_client(cursor, DNI, ID):
     cursor.execute("SELECT * from TelegramBOT WHERE DNI_Client=%s AND ID_Client=%s", (DNI, ID))
     row = cursor.fetchall()
-    if (len(row) > 0): return -1
+    if (len(row) > 0): return [-1,-1]
     cursor.execute("SELECT ID,Nombre,Apellido from ClientData WHERE DNI=%s AND ID=%s", (DNI, ID))
     row = cursor.fetchall()
-    print(row)
     if len(row) != 0:
         return [1, row[0][1], row[0][2]]
     else:
-        return 0
+        return [0,0]
 
 
 def check_telegram(cursor, chat_id):
@@ -101,15 +100,12 @@ def check_contract(connection2, cursor2, person):
         (person[1], person[1]))
     distance_min = cursor2.fetchall()
     distance_min = distance_min[0][0]
-    print(distance_min)
     connection2.commit()
     cursor2.execute("SELECT MaxKM FROM ClientData WHERE ID = %s",(person[1],))
     MaxKM = cursor2.fetchall()
     MaxKM = MaxKM[0][0]
-    print(MaxKM)
     connection2.commit()
     if len(row) != 0:
-        print(row)
         speed = row[4]
         fuel = row[5]
         pos_x = row[8]
@@ -164,9 +160,7 @@ def checker():
 
         registreds = cursor2.fetchall()
         connection2.commit()
-        print(registreds)
         for person in registreds:
-            print(person)
             checks = check_contract(connection2, cursor2, person)
             if checks != 3:
                 if person[1] in checked_list and checked_list[person[1]] != checks[-1]:
@@ -175,7 +169,7 @@ def checker():
                 elif person[1] not in checked_list:
                     send_message_if_danger(checks, person)
                     checked_list[person[1]] = checks[-1]
-    sleep(9.5)
+        time.sleep(9.5)
 
 
 def send_message_if_danger(checks, person):
@@ -206,7 +200,6 @@ if __name__ == '__main__':
     p = mp.Process(target=checker)
     p.start()
     while 1:
-        print("tele")
         messages = get_updates(readed)
         if len(messages["result"]) > 0:
             readed = messages["result"][0]["update_id"]
